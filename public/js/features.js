@@ -29,15 +29,45 @@ const DEFAULT_TRANSACTIONS = [
 
 const BUDGET_CATEGORIES = ["Housing", "Food", "Subscriptions", "Transportation", "Entertainment", "Utilities", "Shopping", "Misc"];
 
-function getTransactions() {
-  const stored = localStorage.getItem("transactions");
-  if (stored) return JSON.parse(stored);
-  localStorage.setItem("transactions", JSON.stringify(DEFAULT_TRANSACTIONS));
-  return DEFAULT_TRANSACTIONS;
+// Budget Storage & Logic (Still in localStorage as per requirement)
+async function getTransactions() {
+  const session = authGuard();
+  if (!session) return [];
+
+  try {
+    const res = await fetch('/api/transactions', {
+      headers: { 'Authorization': `Bearer ${session.access_token}` }
+    });
+    if (!res.ok) throw new Error('Failed to fetch transactions');
+    return await res.json();
+  } catch (e) {
+    console.error(e);
+    return [];
+  }
 }
 
-function saveTransactions(list) {
-  localStorage.setItem("transactions", JSON.stringify(list));
+async function addTransactionAPI(tx) {
+  const session = authGuard();
+  if (!session) return;
+
+  const res = await fetch('/api/transactions', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${session.access_token}`
+    },
+    body: JSON.stringify(tx)
+  });
+  return await res.json();
+}
+
+async function deleteTransactionAPI(id) {
+  const session = authGuard();
+  const res = await fetch(`/api/transactions/${id}`, {
+    method: 'DELETE',
+    headers: { 'Authorization': `Bearer ${session.access_token}` }
+  });
+  return res.ok;
 }
 
 // Budget Storage & Logic
@@ -50,23 +80,24 @@ function saveBudgets(budgets) {
   localStorage.setItem("budgets", JSON.stringify(budgets));
 }
 
-function getSpendingByCategory() {
-  const txs = getTransactions();
+async function getSpendingByCategory() {
+  const txs = await getTransactions();
   const spending = {};
   txs.forEach(tx => {
-    if (tx.amountCents < 0) {
+    // API returns 'amount' as numeric (negative for expense)
+    if (tx.amount < 0) {
       const cat = tx.category;
-      spending[cat] = (spending[cat] || 0) + Math.abs(tx.amountCents);
+      spending[cat] = (spending[cat] || 0) + Math.abs(tx.amount * 100); // Normalize to cents for budget logic
     }
   });
   return spending;
 }
 
-function renderTransactions(containerId) {
+async function renderTransactions(containerId) {
   const container = document.getElementById(containerId);
   if (!container) return;
 
-  const txs = getTransactions();
+  const txs = await getTransactions();
   container.innerHTML = "";
 
   txs.forEach(tx => {
@@ -77,15 +108,17 @@ function renderTransactions(containerId) {
     dateTd.textContent = d.toLocaleString('default', { month: 'short', day: '2-digit' });
 
     const descTd = document.createElement("td");
-    descTd.textContent = tx.description;
+    // API returns 'name' and 'tag'
+    descTd.innerHTML = `<div>${tx.name}</div><small style="color:var(--text-muted); font-size:10px; background: rgba(0,0,0,0.05); padding: 2px 4px; border-radius: 4px;">${tx.tag}</small>`;
 
     const catTd = document.createElement("td");
     catTd.textContent = tx.category;
 
     const amtTd = document.createElement("td");
-    amtTd.className = `amount ${tx.amountCents >= 0 ? 'positive' : 'negative'}`;
+    const amtCents = tx.amount * 100;
+    amtTd.className = `amount ${amtCents >= 0 ? 'positive' : 'negative'}`;
     amtTd.style.textAlign = "right";
-    amtTd.textContent = (tx.amountCents >= 0 ? '+' : '-') + formatCurrency(tx.amountCents);
+    amtTd.textContent = (amtCents >= 0 ? '+' : '-') + formatCurrency(Math.abs(amtCents));
 
     tr.appendChild(dateTd);
     tr.appendChild(descTd);
@@ -95,9 +128,9 @@ function renderTransactions(containerId) {
   });
 }
 
-function checkBudgetAlerts() {
+async function checkBudgetAlerts() {
   const budgets = getBudgets();
-  const spending = getSpendingByCategory();
+  const spending = await getSpendingByCategory();
   const alerts = [];
 
   for (const [category, limitCents] of Object.entries(budgets)) {
@@ -203,7 +236,7 @@ function checkBlockedView() {
 /* ---------- FEATURE 2: CALENDAR ---------- */
 let currentCalendarDate = new Date();
 
-function renderCalendar() {
+async function renderCalendar() {
   const grid = document.getElementById("calendarGrid");
   const label = document.getElementById("calendarMonthLabel");
   if (!grid || !label) return;
@@ -234,9 +267,12 @@ function renderCalendar() {
     grid.appendChild(empty);
   }
 
-  const bills = (typeof getBills === 'function') ? getBills() : [];
+  const bills = (typeof getBills === 'function') ? await getBills() : [];
   const today = new Date();
   today.setHours(0,0,0,0);
+
+  // We should also show transactions as "spent" on the calendar
+  const txs = await getTransactions();
 
   for (let day = 1; day <= daysInMonth; day++) {
     const dayDiv = document.createElement("div");
@@ -253,31 +289,26 @@ function renderCalendar() {
     num.textContent = day;
     dayDiv.appendChild(num);
 
-    // Find bills for this day
+    // Render bills
     const dayBills = bills.filter(b => b.due === dateStr);
     dayBills.forEach(bill => {
       const bDiv = document.createElement("div");
       const status = (typeof computeBillStatus === 'function') ? computeBillStatus(bill) : 'upcoming';
-      
-      // Visual indicators for upcoming within 7 days
-      let finalStatus = status;
-      if (status === 'upcoming') {
-        const diff = (new Date(bill.due) - today) / (1000 * 60 * 60 * 24);
-        if (diff >= 0 && diff <= 7) finalStatus = 'upcoming'; // Already upcoming, but could be 'near'
-        if (diff === 0) finalStatus = 'today-due'; // Custom indicator for today
-      }
-
-      bDiv.className = `calendar-bill ${finalStatus}`;
+      bDiv.className = `calendar-bill ${status}`;
       bDiv.textContent = `${bill.name.split('•')[0]} ${formatCurrency(bill.amountCents)}`;
-      bDiv.title = bill.name;
-      bDiv.onclick = (e) => {
-        e.stopPropagation();
-        if (typeof payBill === 'function') {
-          payBill(bill.id);
-          renderCalendar();
-        }
-      };
+      bDiv.onclick = async (e) => { e.stopPropagation(); if (typeof payBill === 'function') { await payBill(bill.id); renderCalendar(); } };
       dayDiv.appendChild(bDiv);
+    });
+
+    // Render transactions for this day
+    const dayTxs = txs.filter(t => t.date === dateStr && t.amount < 0);
+    dayTxs.forEach(t => {
+      const tDiv = document.createElement("div");
+      tDiv.className = "calendar-bill";
+      tDiv.style.background = "rgba(0,0,0,0.1)";
+      tDiv.style.color = "var(--text-main)";
+      tDiv.textContent = `${t.name} ${formatCurrency(Math.abs(t.amount * 100))}`;
+      dayDiv.appendChild(tDiv);
     });
 
     grid.appendChild(dayDiv);
@@ -481,8 +512,8 @@ function saveNetWorthSettings() {
 }
 
 /* ---------- FEATURE 5: ANOMALY DETECTION ---------- */
-function getAnomalyAlerts() {
-  const txs = getTransactions();
+async function getAnomalyAlerts() {
+  const txs = await getTransactions();
   const now = new Date();
   const oneWeek = 7 * 24 * 60 * 60 * 1000;
   
@@ -519,12 +550,12 @@ function getAnomalyAlerts() {
   return alerts;
 }
 
-function renderAnomalyAlerts() {
+async function renderAnomalyAlerts() {
   const container = document.getElementById("anomalyAlertsContainer");
   if (!container) return;
 
-  const alerts = getAnomalyAlerts();
-  const budgetAlerts = checkBudgetAlerts();
+  const alerts = await getAnomalyAlerts();
+  const budgetAlerts = await checkBudgetAlerts();
 
   container.innerHTML = "";
   if (alerts.length === 0 && budgetAlerts.length === 0) {
@@ -558,11 +589,11 @@ function renderAnomalyAlerts() {
 }
 
 /* ---------- FEATURE 6: REPORT CARD ---------- */
-function renderReportCard() {
+async function renderReportCard() {
   const container = document.getElementById("reportCard");
   if (!container) return;
 
-  const report = generateMonthlyReport();
+  const report = await generateMonthlyReport();
   
   const gradeEl = document.getElementById("reportGrade");
   const monthEl = document.getElementById("reportMonth");
@@ -587,8 +618,8 @@ function renderReportCard() {
   if (anomaliesEl) anomaliesEl.textContent = report.anomalies;
 }
 
-function generateMonthlyReport() {
-  const txs = getTransactions();
+async function generateMonthlyReport() {
+  const txs = await getTransactions();
   const now = new Date();
   const month = now.getMonth();
   const year = now.getFullYear();
@@ -647,20 +678,47 @@ function generateMonthlyReport() {
 }
 
 /* ---------- FEATURE 7: SAVINGS GOALS ---------- */
-function getGoals() {
-  const stored = localStorage.getItem("goals");
-  return stored ? JSON.parse(stored) : [];
+async function getGoals() {
+  const session = authGuard();
+  if (!session) return [];
+  
+  const res = await fetch('/api/savings-goals', {
+    headers: { 'Authorization': `Bearer ${session.access_token}` }
+  });
+  return await res.json();
 }
 
-function saveGoals(list) {
-  localStorage.setItem("goals", JSON.stringify(list));
+async function addGoalAPI(goal) {
+  const session = authGuard();
+  const res = await fetch('/api/savings-goals', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${session.access_token}`
+    },
+    body: JSON.stringify(goal)
+  });
+  return await res.json();
 }
 
-function renderGoals() {
+async function updateGoalAPI(id, saved_amount) {
+  const session = authGuard();
+  const res = await fetch(`/api/savings-goals/${id}`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${session.access_token}`
+    },
+    body: JSON.stringify({ saved_amount })
+  });
+  return await res.json();
+}
+
+async function renderGoals() {
   const container = document.getElementById("goalsContainer");
   if (!container) return;
 
-  const goals = getGoals();
+  const goals = await getGoals();
   container.innerHTML = "";
 
   if (goals.length === 0) {
@@ -672,7 +730,7 @@ function renderGoals() {
     return;
   }
 
-  const report = generateMonthlyReport();
+  const report = await generateMonthlyReport();
   const currentMonthlySaving = Math.max(0, report.totalIncome - report.totalExpenses);
 
   goals.forEach((goal, index) => {
@@ -819,27 +877,27 @@ function updateNavigation() {
 }
 
 /* ---------- INITIALIZATION ---------- */
-document.addEventListener("DOMContentLoaded", () => {
-  // Seed transactions if needed
-  getTransactions();
+document.addEventListener("DOMContentLoaded", async () => {
+  const session = authGuard();
+  if (!session) return; // authGuard redirects
+
+  // Seed transactions logic removed as we use DB now
+  
   // Update sidebar on all pages
   updateNavigation();
-  // Render transactions if on transactions page
-  renderTransactions("transactionsBody");
-  // Render calendar if on calendar page
-  renderCalendar();
-  // Render splits if on splits page
-  renderSplits();
-  // Render net worth if on dashboard
-  renderNetWorth();
-  // Render anomalies if on dashboard
-  renderAnomalyAlerts();
-  // Render report if on report page
-  renderReportCard();
-  // Render goals if on goals page
-  renderGoals();
+  
+  // Render pages asynchronously
+  await renderTransactions("transactionsBody");
+  await renderCalendar();
+  renderSplits(); // Still localStorage
+  renderNetWorth(); // Still localStorage
+  await renderAnomalyAlerts();
+  await renderReportCard();
+  await renderGoals();
+  renderSubscriptions();
+
   // Check for budget blockage
   if (!sessionStorage.getItem("budget_acknowledged")) {
-    checkBlockedView();
+    await checkBlockedView();
   }
 });

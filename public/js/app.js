@@ -13,16 +13,47 @@ function toggleTheme() {
   );
 }
 document.addEventListener("DOMContentLoaded", applyTheme);
-function login() {
-  const email = document.getElementById("email")?.value;
-  const pass = document.getElementById("password")?.value;
-  const error = document.getElementById("error");
+// ---------- SUPABASE AUTH ----------
+const SUPABASE_URL = 'https://YOUR_SUPABASE_URL.supabase.co'; // REPLACE THIS
+const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY'; // REPLACE THIS
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-  if (email === "zeph@dinero.com" && pass === "pwd") {
-    window.location.href = "profiles.html";
-  } else if (error) {
-    error.innerText = "Invalid email or password";
+async function login() {
+  const email = document.getElementById("email")?.value;
+  const password = document.getElementById("password")?.value;
+  const errorEl = document.getElementById("error");
+
+  if (!email || !password) {
+    if (errorEl) errorEl.innerText = "Please enter both email and password";
+    return;
   }
+
+  const { data, error } = await supabaseClient.auth.signInWithPassword({
+    email,
+    password,
+  });
+
+  if (error) {
+    if (errorEl) errorEl.innerText = error.message;
+  } else {
+    localStorage.setItem("dinero_session", JSON.stringify(data.session));
+    window.location.href = "dashboard.html";
+  }
+}
+
+async function logout() {
+  await supabaseClient.auth.signOut();
+  localStorage.removeItem("dinero_session");
+  window.location.href = "login.html";
+}
+
+function authGuard() {
+  const sessionRaw = localStorage.getItem("dinero_session");
+  if (!sessionRaw) {
+    window.location.href = "login.html";
+    return null;
+  }
+  return JSON.parse(sessionRaw);
 }
 
 
@@ -203,39 +234,26 @@ function verifyPin() {
 }
 
 // ---------- DASHBOARD ----------
-function loadUser() {
-  let profile = null;
+async function loadUser() {
+  const session = authGuard();
+  if (!session) return;
 
-  try {
-    profile = JSON.parse(localStorage.getItem("profile"));
-  } catch (e) {
-    console.warn("Failed to parse stored profile", e);
+  const user = session.user;
+  
+  const username = document.getElementById("username");
+  if (username) {
+    username.innerText = user.email.split('@')[0];
   }
 
-  // Fallback: ensure we always have a profile + avatar for header pills
-  if (!profile) {
-    const profiles = getProfiles();
-    if (profiles && profiles.length) {
-      profile = profiles[0];
-      localStorage.setItem("profile", JSON.stringify(profile));
-    }
+  const avatar = document.getElementById("userAvatar");
+  if (avatar) {
+    // Default avatar
+    avatar.src = "assets/avatars/avatar1.png";
   }
 
-  if (profile) {
-    const username = document.getElementById("username");
-    if (username) {
-      username.innerText = profile.name;
-    }
-
-    const avatar = document.getElementById("userAvatar");
-    if (avatar) {
-      avatar.src = profile.avatar;
-    }
-
-    const cardHolder = document.getElementById("cardHolderName");
-    if (cardHolder) {
-      cardHolder.innerText = profile.name;
-    }
+  const cardHolder = document.getElementById("cardHolderName");
+  if (cardHolder) {
+    cardHolder.innerText = user.email.split('@')[0];
   }
 
   // Account balance (for dashboard + bills)
