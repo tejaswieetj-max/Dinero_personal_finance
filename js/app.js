@@ -18,7 +18,7 @@ function login() {
   const pass = document.getElementById("password")?.value;
   const error = document.getElementById("error");
 
-  if (email === "tej@gmail.com" && pass === "pwd") {
+  if (email === "zeph@dinero.com" && pass === "pwd") {
     window.location.href = "profiles.html";
   } else if (error) {
     error.innerText = "Invalid email or password";
@@ -30,8 +30,16 @@ function login() {
 // ---------- PROFILES ----------
 const DEFAULT_PROFILES = [
   { name: "Zeph", avatar: "assets/avatars/avatar1.png" },
-  { name: "Tessa", avatar: "assets/avatars/avatar2.png" },
-  { name: "Tanya", avatar: "assets/avatars/avatar3.png" },
+  { name: "Tejas", avatar: "assets/avatars/avatar2.png" },
+  { name: "Andrea", avatar: "assets/avatars/avatar3.png" },
+  { name: "Mrini", avatar: "assets/avatars/avatar4.png" },
+  { name: "Thanu", avatar: "assets/avatars/avatar5.png" },
+  { name: "Tani", avatar: "assets/avatars/avatar1.png" },
+  { name: "Div", avatar: "assets/avatars/avatar2.png" },
+  { name: "Sam", avatar: "assets/avatars/avatar3.png" },
+  { name: "Daniel", avatar: "assets/avatars/avatar4.png" },
+  { name: "Zahra", avatar: "assets/avatars/avatar5.png" },
+  { name: "Aditi", avatar: "assets/avatars/avatar1.png" },
 ];
 
 let isManagingProfiles = false;

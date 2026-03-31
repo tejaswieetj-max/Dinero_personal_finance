@@ -557,6 +557,231 @@ function renderAnomalyAlerts() {
   });
 }
 
+/* ---------- FEATURE 6: REPORT CARD ---------- */
+function renderReportCard() {
+  const container = document.getElementById("reportCard");
+  if (!container) return;
+
+  const report = generateMonthlyReport();
+  
+  const gradeEl = document.getElementById("reportGrade");
+  const monthEl = document.getElementById("reportMonth");
+  const savingsRateEl = document.getElementById("reportSavingsRate");
+  const savingsProgressEl = document.getElementById("reportSavingsProgress");
+  const topCatEl = document.getElementById("reportTopCategory");
+  const bigExpEl = document.getElementById("reportBiggestExpense");
+  const breachesEl = document.getElementById("reportBudgetBreaches");
+  const anomaliesEl = document.getElementById("reportAnomalies");
+
+  if (gradeEl) gradeEl.textContent = report.grade;
+  if (monthEl) monthEl.textContent = report.monthName;
+  if (savingsRateEl) savingsRateEl.textContent = report.savingsRate + "%";
+  if (savingsProgressEl) {
+    const rate = Math.max(0, Math.min(100, parseFloat(report.savingsRate)));
+    savingsProgressEl.style.width = rate + "%";
+    savingsProgressEl.style.background = rate > 20 ? 'var(--primary)' : 'var(--error)';
+  }
+  if (topCatEl) topCatEl.textContent = report.topCategory;
+  if (bigExpEl) bigExpEl.textContent = report.biggestExpense.description + " (" + formatCurrency(report.biggestExpense.amountCents) + ")";
+  if (breachesEl) breachesEl.textContent = report.budgetBreaches;
+  if (anomaliesEl) anomaliesEl.textContent = report.anomalies;
+}
+
+function generateMonthlyReport() {
+  const txs = getTransactions();
+  const now = new Date();
+  const month = now.getMonth();
+  const year = now.getFullYear();
+
+  const currentMonthTxs = txs.filter(tx => {
+    const d = new Date(tx.date);
+    return d.getMonth() === month && d.getFullYear() === year;
+  });
+
+  let totalIncome = 0;
+  let totalExpenses = 0;
+  let biggestExpense = { description: "None", amountCents: 0 };
+  const categories = {};
+
+  currentMonthTxs.forEach(tx => {
+    if (tx.amountCents > 0) {
+      totalIncome += tx.amountCents;
+    } else {
+      const amt = Math.abs(tx.amountCents);
+      totalExpenses += amt;
+      categories[tx.category] = (categories[tx.category] || 0) + amt;
+      if (amt > biggestExpense.amountCents) {
+        biggestExpense = { description: tx.description, amountCents: amt };
+      }
+    }
+  });
+
+  const sortedCats = Object.entries(categories).sort((a,b) => b[1] - a[1]);
+  const topCategory = sortedCats[0] ? sortedCats[0][0] : "None";
+
+  const savings = totalIncome - totalExpenses;
+  const savingsRate = totalIncome > 0 ? (savings / totalIncome * 100).toFixed(1) : 0;
+
+  const budgetAlerts = checkBudgetAlerts();
+  const anomalies = getAnomalyAlerts();
+  
+  let grade = "C";
+  const sr = parseFloat(savingsRate);
+  if (sr > 30 && budgetAlerts.length === 0 && anomalies.length === 0) grade = "A";
+  else if (sr > 15 && budgetAlerts.length === 0) grade = "B";
+  else if (sr > 0) grade = "C";
+  else if (sr > -20) grade = "D";
+  else grade = "F";
+
+  return {
+    monthName: now.toLocaleString('default', { month: 'long' }),
+    totalIncome,
+    totalExpenses,
+    savingsRate,
+    topCategory,
+    biggestExpense,
+    grade,
+    budgetBreaches: budgetAlerts.length,
+    anomalies: anomalies.length
+  };
+}
+
+/* ---------- FEATURE 7: SAVINGS GOALS ---------- */
+function getGoals() {
+  const stored = localStorage.getItem("goals");
+  return stored ? JSON.parse(stored) : [];
+}
+
+function saveGoals(list) {
+  localStorage.setItem("goals", JSON.stringify(list));
+}
+
+function renderGoals() {
+  const container = document.getElementById("goalsContainer");
+  if (!container) return;
+
+  const goals = getGoals();
+  container.innerHTML = "";
+
+  if (goals.length === 0) {
+    container.innerHTML = `
+      <div class="panel" style="text-align: center; padding: 40px;">
+        <p style="color:var(--text-muted); font-size:16px;">You don't have any savings goals yet. Start small, dream big!</p>
+      </div>
+    `;
+    return;
+  }
+
+  const report = generateMonthlyReport();
+  const currentMonthlySaving = Math.max(0, report.totalIncome - report.totalExpenses);
+
+  goals.forEach((goal, index) => {
+    const card = document.createElement("div");
+    card.className = "panel";
+    card.style.marginBottom = "16px";
+    
+    const progress = (goal.target > 0) ? (goal.current / goal.target) * 100 : 0;
+    const remaining = Math.max(0, goal.target - goal.current);
+    
+    // Projected date
+    let projection = "Never";
+    if (currentMonthlySaving > 0) {
+      const monthsLeft = Math.ceil(remaining / currentMonthlySaving);
+      const targetDate = new Date();
+      targetDate.setMonth(targetDate.getMonth() + monthsLeft);
+      projection = targetDate.toLocaleDateString('default', { month: 'long', year: 'numeric' });
+    } else {
+      projection = "No current savings";
+    }
+
+    const today = new Date();
+    const deadlineDate = new Date(goal.deadline);
+    const isOverdue = deadlineDate < today;
+    
+    // At risk: if deadline is before projected date
+    let isAtRisk = false;
+    if (projection !== "Never" && projection !== "No current savings") {
+      const projDate = new Date();
+      projDate.setMonth(projDate.getMonth() + Math.ceil(remaining / currentMonthlySaving));
+      isAtRisk = !isOverdue && deadlineDate < projDate;
+    }
+    
+    let statusClass = "";
+    if (isOverdue) statusClass = "critical";
+    else if (isAtRisk) statusClass = "warning";
+    else statusClass = ""; // Default green
+
+    card.innerHTML = `
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px;">
+        <div>
+          <strong style="font-size:18px;">${goal.name}</strong>
+          <p style="color:var(--text-muted); font-size:12px; margin-top:4px;">Target: ${formatCurrency(goal.target)}</p>
+        </div>
+        <button class="modal-close" style="font-size:24px; padding:0 8px;" onclick="deleteGoal(${index})">&times;</button>
+      </div>
+      
+      <div style="display:flex; justify-content:space-between; font-size:13px; margin-bottom:8px;">
+        <span>Progress: ${formatCurrency(goal.current)}</span>
+        <span>${Math.round(progress)}%</span>
+      </div>
+      
+      <div class="progress-container" style="height:12px;">
+        <div class="progress-bar ${statusClass}" style="width: ${Math.min(100, progress)}%"></div>
+      </div>
+      
+      <div style="margin-top:16px; display:grid; grid-template-columns: 1fr 1fr; gap:16px; border-top:1px solid rgba(0,0,0,0.05); padding-top:12px;">
+        <div>
+          <small style="color:var(--text-muted); display:block; margin-bottom:4px;">Target Date</small>
+          <span style="font-weight:600; font-size:13px;">${goal.deadline}</span>
+        </div>
+        <div style="text-align:right;">
+          <small style="color:var(--text-muted); display:block; margin-bottom:4px;">Projected Completion</small>
+          <span style="font-weight:600; font-size:13px; color: ${statusClass === 'critical' ? 'var(--error)' : statusClass === 'warning' ? '#f59e0b' : 'inherit'}">${projection}</span>
+        </div>
+      </div>
+    `;
+    container.appendChild(card);
+  });
+}
+
+function deleteGoal(index) {
+  if (confirm("Are you sure you want to delete this goal?")) {
+    const goals = getGoals();
+    goals.splice(index, 1);
+    saveGoals(goals);
+    renderGoals();
+  }
+}
+
+/* ---------- FEATURE 8: DATA EXPORT ---------- */
+function exportTransactionsCSV() {
+  const txs = getTransactions();
+  if (txs.length === 0) {
+    alert("No transactions to export.");
+    return;
+  }
+
+  const headers = ["Date", "Description", "Amount", "Category"];
+  const rows = txs.map(tx => [
+    tx.date,
+    tx.description.replace(/,/g, ""), // Remove commas to prevent CSV breakage
+    (tx.amountCents / 100).toFixed(2),
+    tx.category
+  ]);
+
+  let csvContent = "data:text/csv;charset=utf-8," 
+    + headers.join(",") + "\n"
+    + rows.map(e => e.join(",")).join("\n");
+
+  const encodedUri = encodeURI(csvContent);
+  const link = document.createElement("a");
+  link.setAttribute("href", encodedUri);
+  link.setAttribute("download", `dinero_transactions_${new Date().toISOString().split('T')[0]}.csv`);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
+
 /* ---------- NAVIGATION ---------- */
 function updateNavigation() {
   const nav = document.querySelector(".sidebar nav");
@@ -609,6 +834,10 @@ document.addEventListener("DOMContentLoaded", () => {
   renderNetWorth();
   // Render anomalies if on dashboard
   renderAnomalyAlerts();
+  // Render report if on report page
+  renderReportCard();
+  // Render goals if on goals page
+  renderGoals();
   // Check for budget blockage
   if (!sessionStorage.getItem("budget_acknowledged")) {
     checkBlockedView();
