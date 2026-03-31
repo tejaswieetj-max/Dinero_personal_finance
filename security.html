@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Verify Identity</title>
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/auth-method.css">
+  <link rel="stylesheet" href="css/security.css">
+</head>
+<body class="auth-bg">
+  <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
+  <div class="auth-user-pill">
+    <img id="userAvatar" class="auth-avatar" alt="User avatar">
+    <div class="auth-user-meta">
+      <span class="auth-user-name" id="username"></span>
+      <span class="auth-user-label">Verifying PIN for this profile</span>
+    </div>
+  </div>
+  <div class="pin-wrapper">
+    <h1>Enter PIN</h1>
+    <p class="sub">Enter your 4-digit security code</p>
+    <div class="pin-dots">
+      <span class="dot" id="dot0"></span>
+      <span class="dot" id="dot1"></span>
+      <span class="dot" id="dot2"></span>
+      <span class="dot" id="dot3"></span>
+    </div>
+    <div class="pin-grid">
+      <button onclick="pressKey(1)">1</button>
+      <button onclick="pressKey(2)">2</button>
+      <button onclick="pressKey(3)">3</button>
+      <button onclick="pressKey(4)">4</button>
+      <button onclick="pressKey(5)">5</button>
+      <button onclick="pressKey(6)">6</button>
+      <button onclick="pressKey(7)">7</button>
+      <button onclick="pressKey(8)">8</button>
+      <button onclick="pressKey(9)">9</button>
+      <div></div>
+      <button onclick="pressKey(0)">0</button>
+      <button onclick="deleteKey()">⌫</button>
+    </div>
+    <button class="verify-btn" onclick="verifyPin()">Verify</button>
+  </div>
+  <script src="js/app.js"></script>
+</body>
+</html>

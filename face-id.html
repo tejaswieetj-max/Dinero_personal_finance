@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Face ID</title>
+
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/auth-method.css">
+  <link rel="stylesheet" href="css/face-id.css">
+</head>
+
+<body class="auth-bg">
+
+  <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
+
+  <div class="auth-user-pill">
+    <img id="userAvatar" class="auth-avatar" alt="User avatar">
+    <div class="auth-user-meta">
+      <span class="auth-user-name" id="username"></span>
+      <span class="auth-user-label">Face ID for this profile</span>
+    </div>
+  </div>
+
+  <div class="face-wrapper" id="faceContainer">
+
+    <div class="face-icon scanning">
+      👤
+    </div>
+
+    <h2 id="faceTitle">Scanning...</h2>
+    <p id="faceSub">Hold still for Face ID</p>
+
+    <button id="dashboardBtn" class="verify-btn" style="display:none;"
+      onclick="window.location.href='dashboard.html'">
+      Go to Dashboard
+    </button>
+
+  </div>
+
+  <script src="js/app.js"></script>
+</body>
+</html>

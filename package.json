@@ -1,0 +1,21 @@
+{
+  "name": "dinero_personal_finance",
+  "version": "1.0.0",
+  "description": "Financial management web app - A web programming project",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tejaswieetj-max/Dinero_personal_finance.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "vite": "^5.0.0"
+  }
+}

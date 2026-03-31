@@ -1,0 +1,284 @@
+/* =======================================================
+   LOGIN LAYOUT
+======================================================= */
+
+
+.features {
+  list-style: none;
+  padding: 0;
+}
+
+/* =======================================================
+   SHARED AUTH CARD
+======================================================= */
+
+.welcome-card,
+.auth-card {
+  background: var(--card-bg);
+  padding: 40px;
+  border-radius: 20px;
+  text-align: center;
+  box-shadow: 0 25px 50px rgba(0,0,0,0.15);
+}
+
+.bank-logo {
+  width: 40px;
+  margin-bottom: 16px;
+}
+
+/* Inputs */
+input {
+  width: 100%;
+  padding: 14px;
+  margin-bottom: 14px;
+  border-radius: 14px;
+  border: 1px solid #e5e7eb;
+  font-size: 15px;
+}
+
+/* Primary Button */
+.primary-btn {
+  width: 100%;
+  padding: 14px;
+  border-radius: 999px;
+  border: none;
+  background: var(--primary);
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+/* Error */
+.error {
+  margin-top: 12px;
+  color: var(--error);
+  font-size: 14px;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .welcome-wrapper {
+    grid-template-columns: 1fr;
+    padding: 40px;
+    text-align: center;
+  }
+}
+
+/* =======================================================
+   AUTH METHOD PAGE
+======================================================= */
+
+.auth-bg {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.auth-method-card {
+  width: 100%;
+  max-width: 520px;
+  text-align: center;
+}
+
+.sub {
+  color: var(--text-muted);
+  margin-bottom: 30px;
+}
+
+.method-card {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 20px;
+  border-radius: 18px;
+  background: var(--card-bg);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.12);
+  margin-bottom: 20px;
+  text-decoration: none;
+  color: inherit;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.method-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 25px 50px rgba(0,0,0,0.15);
+}
+
+.method-card h3 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.method-card p {
+  margin: 4px 0 0;
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+.icon {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+}
+
+.icon.pin {
+  background: #d1fae5;
+}
+
+.icon.face {
+  background: #e0e7ff;
+}
+
+.demo-pin {
+  margin-top: 30px;
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+/* =======================================================
+   PIN PAGE
+======================================================= */
+
+.pin-wrapper {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.pin-wrapper h1 {
+  font-size: 42px;
+  margin-bottom: 10px;
+}
+
+.pin-wrapper .sub {
+  font-size: 18px;
+}
+
+/* PIN Dots */
+.pin-dots {
+  display: flex;
+  gap: 18px;
+  margin-bottom: 40px;
+}
+
+.dot {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #cbd5e1;
+  transition: background 0.2s ease;
+}
+
+.dot.filled {
+  background: var(--primary);
+}
+
+/* PIN Grid */
+.pin-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 90px);
+  gap: 24px;
+  margin-bottom: 30px;
+}
+
+/* IMPORTANT: Force white keypad in dark mode */
+.pin-grid button {
+  width: 90px;
+  height: 90px;
+  border-radius: 24px;
+  border: none;
+  font-size: 26px;
+  font-weight: 500;
+  background: #ffffff;   /* Always white */
+  color: #1f2937;        /* Dark text */
+  box-shadow: 0 18px 35px rgba(0,0,0,0.15);
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.pin-grid button:hover {
+  transform: translateY(-4px);
+}
+
+.pin-grid button:active {
+  transform: scale(0.92);
+}
+
+/* Verify Button */
+.verify-btn {
+  margin-top: 20px;
+  padding: 14px 40px;
+  border-radius: 999px;
+  border: none;
+  background: var(--primary);
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  box-shadow: 0 15px 30px rgba(0,0,0,0.12);
+  transition: transform 0.2s ease;
+}
+
+.verify-btn:hover {
+  transform: translateY(-3px);
+}
+/* =======================================================
+   FACE ID PAGE
+======================================================= */
+
+.face-wrapper {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.face-icon {
+  width: 130px;
+  height: 130px;
+  border-radius: 50%;
+  background: #e0e7ff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 50px;
+  margin-bottom: 30px;
+  transition: all 0.4s ease;
+}
+
+/* Success state */
+.face-icon.success {
+  background: #d1fae5;
+  color: #16a34a;
+}
+
+.face-wrapper h2 {
+  font-size: 32px;
+  margin-bottom: 10px;
+}
+
+.face-wrapper p {
+  color: var(--text-muted);
+  font-size: 16px;
+  margin-bottom: 30px;
+}
+
+/* Optional subtle scanning pulse */
+@keyframes pulse {
+  0% { box-shadow: 0 0 0 0 rgba(99,102,241,0.4); }
+  70% { box-shadow: 0 0 0 25px rgba(99,102,241,0); }
+  100% { box-shadow: 0 0 0 0 rgba(99,102,241,0); }
+}
+
+.face-icon.scanning {
+  animation: pulse 2s infinite;
+}

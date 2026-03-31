@@ -1,0 +1,50 @@
+/* ---------- RESET ---------- */
+* {
+  box-sizing: border-box;
+}
+
+/* ---------- THEME VARIABLES ---------- */
+:root {
+  --bg-gradient: linear-gradient(180deg, #eafff5, #c7f9e9);
+  --card-bg: #ffffff;
+  --text-main: #0f172a;
+  --text-muted: #475569;
+  --primary: #2db784;
+  --error: #dc2626;
+}
+
+/* ---------- DARK MODE ---------- */
+body.dark {
+  --bg-gradient: linear-gradient(180deg, #041c2c, #052e2b);
+  --card-bg: #0f2a3a;
+  --text-main: #ffffff;
+  --text-muted: #94a3b8;
+  --primary: #34d399;
+  --error: #f87171;
+}
+
+/* ---------- BASE BODY ---------- */
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, sans-serif;
+  background: var(--bg-gradient);
+  color: var(--text-main);
+  min-height: 100vh;
+}
+
+/* ---------- THEME TOGGLE ---------- */
+.theme-toggle {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: none;
+  background: var(--card-bg);
+  color: var(--text-main);
+  font-size: 20px;
+  cursor: pointer;
+  z-index: 1000;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+}
