@@ -1,0 +1,16 @@
+import { defineConfig } from 'vite';
+import { resolve } from 'path';
+
+export default defineConfig({
+    build: {
+        rollupOptions: {
+            input: {
+                main: resolve(__dirname, 'index.html'),
+                login: resolve(__dirname, 'login.html'),
+                dashboard: resolve(__dirname, 'dashboard.html'),
+                faceid: resolve(__dirname, 'face-id.html'),
+                // Add any other .html files you have here!
+            },
+        },
+    },
+});
