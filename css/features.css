@@ -1,0 +1,231 @@
+/* ---------- Dinero Features Styles ---------- */
+
+/* ---------- MODAL ---------- */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(4px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+}
+
+.modal-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.modal {
+  background: var(--card-bg);
+  border-radius: 20px;
+  width: 90%;
+  max-width: 500px;
+  padding: 24px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  transform: translateY(20px);
+  transition: transform 0.3s ease;
+}
+
+.modal-overlay.active .modal {
+  transform: translateY(0);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: var(--text-muted);
+}
+
+/* ---------- BUDGET LIST ---------- */
+.budget-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  padding: 12px;
+  background: rgba(0, 0, 0, 0.03);
+  border-radius: 12px;
+}
+
+body.dark .budget-item {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.budget-cat-name {
+  font-weight: 600;
+}
+
+.budget-input {
+  width: 100px;
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  background: var(--card-bg);
+  color: var(--text-main);
+  text-align: right;
+}
+
+/* ---------- BLOCKED VIEW ---------- */
+.blocked-view {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(220, 38, 38, 0.8);
+  backdrop-filter: blur(10px);
+  z-index: 3000;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  text-align: center;
+  padding: 40px;
+}
+
+.blocked-view h1 {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.blocked-view p {
+  font-size: 1.2rem;
+  max-width: 600px;
+  margin-bottom: 2rem;
+}
+
+/* ---------- PROGRESS BARS ---------- */
+.progress-container {
+  height: 8px;
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-top: 4px;
+}
+
+body.dark .progress-container {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.progress-bar {
+  height: 100%;
+  background: var(--primary);
+  transition: width 0.3s ease;
+}
+
+.progress-bar.warning {
+  background: #f59e0b;
+}
+
+.progress-bar.critical {
+  background: var(--error);
+}
+
+/* ---------- CALENDAR ---------- */
+.calendar-container {
+  background: var(--card-bg);
+  border-radius: 20px;
+  padding: 24px;
+  margin-top: 24px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+}
+
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 1px;
+  background: rgba(0,0,0,0.05);
+  border: 1px solid rgba(0,0,0,0.05);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+body.dark .calendar-grid {
+  background: rgba(255,255,255,0.05);
+  border-color: rgba(255,255,255,0.05);
+}
+
+.calendar-day-head {
+  background: rgba(0,0,0,0.02);
+  padding: 12px;
+  text-align: center;
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+.calendar-day {
+  background: var(--card-bg);
+  min-height: 100px;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.calendar-day.today {
+  background: rgba(45, 183, 132, 0.05);
+}
+
+.calendar-date-num {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+
+.calendar-bill {
+  font-size: 10px;
+  padding: 4px 6px;
+  border-radius: 4px;
+  background: var(--primary);
+  color: white;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: pointer;
+}
+
+.calendar-bill.paid {
+  opacity: 0.6;
+  background: #94a3b8;
+}
+
+.calendar-bill.overdue {
+  background: var(--error);
+}
+
+.calendar-bill.upcoming {
+  background: #f59e0b;
+}
+
+.calendar-bill.today-due {
+  background: #3b82f6; /* Blue for today */
+  box-shadow: 0 0 8px rgba(59, 130, 246, 0.5);
+  font-weight: bold;
+}

@@ -4,6 +4,7 @@
   <title>Dashboard</title>
   <link rel="stylesheet" href="css/main.css">
   <link rel="stylesheet" href="css/dashboard.css">
+  <link rel="stylesheet" href="css/features.css">
 </head>
 <body onload="loadUser()">
 <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
@@ -28,36 +29,39 @@
       </div>
       <img id="userAvatar" class="header-avatar">
     </div>
+
+    <!-- FEATURE 4: NET WORTH SNAPSHOT -->
+    <div class="panel" style="margin-bottom: 24px; background: linear-gradient(135deg, var(--primary), #1e293b); color: white;">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <div>
+          <p style="opacity: 0.8; margin: 0;">Net Worth</p>
+          <h1 id="netWorthValue" style="margin: 4px 0; font-size: 2.5rem;">₹0.00</h1>
+        </div>
+        <button class="btn" style="background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); color: white;" onclick="openNetWorthModal()">Manage Assets & Debt</button>
+      </div>
+      <div class="row" style="margin-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px;">
+        <div style="flex: 1;">
+          <small style="opacity: 0.7; display: block; margin-bottom: 4px;">Total Assets</small>
+          <strong id="totalAssets" style="font-size: 1.2rem;">₹0.00</strong>
+        </div>
+        <div style="flex: 1; text-align: right;">
+          <small style="opacity: 0.7; display: block; margin-bottom: 4px;">Total Liabilities</small>
+          <strong id="totalLiabilities" style="font-size: 1.2rem;">₹0.00</strong>
+        </div>
+      </div>
+    </div>
+
     <div class="cards">
-      <div class="card">
-        <span id="totalBalance">₹24,562.00</span>
-        <br>
-        <small>Total Balance</small>
-        <div class="card-icon">💰</div>
-        <div class="card-trend positive">
-          <span>▲</span>
-          <span>+12.5% vs last month</span>
-        </div>
-      </div>
-      <div class="card">
-        ₹6,400.00
-        <br>
-        <small>Monthly Income</small>
-        <div class="card-icon">📈</div>
-        <div class="card-trend positive">
-          <span>▲</span>
-          <span>+8.2% vs last month</span>
-        </div>
-      </div>
-      <div class="card">
-        ₹3,190.00
-        <br>
-        <small>Monthly Expenses</small>
-        <div class="card-icon">📉</div>
-        <div class="card-trend negative">
-          <span>▼</span>
-          <span>-3.1% vs last month</span>
-        </div>
+      ...
+    </div>
+
+    <!-- FEATURE 5: ANOMALY ALERTS -->
+    <div class="panel" style="margin-top: 24px;">
+      <h3 style="margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
+        <span>🔔</span> Alerts & Insights
+      </h3>
+      <div id="anomalyAlertsContainer">
+        <!-- Dynamic alerts will appear here -->
       </div>
     </div>
 
@@ -84,6 +88,52 @@
   </main>
 </div>
 
-<script src="js/app.js"></script>
+<!-- Net Worth Modal -->
+<div id="netWorthModal" class="modal-overlay">
+  <div class="modal">
+    <div class="modal-header">
+      <h2>Manage Assets & Debt</h2>
+      <button class="modal-close" onclick="closeNetWorthModal()">&times;</button>
+    </div>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+      <div>
+        <h4 style="margin-bottom: 12px;">Assets</h4>
+        <div class="budget-item" style="flex-direction: column; align-items: flex-start;">
+          <small>Cash</small>
+          <input type="number" class="budget-input nw-asset" data-key="cash" style="width: 100%;" placeholder="0.00">
+        </div>
+        <div class="budget-item" style="flex-direction: column; align-items: flex-start;">
+          <small>Savings</small>
+          <input type="number" class="budget-input nw-asset" data-key="savings" style="width: 100%;" placeholder="0.00">
+        </div>
+        <div class="budget-item" style="flex-direction: column; align-items: flex-start;">
+          <small>Investments</small>
+          <input type="number" class="budget-input nw-asset" data-key="investments" style="width: 100%;" placeholder="0.00">
+        </div>
+      </div>
+      <div>
+        <h4 style="margin-bottom: 12px;">Liabilities</h4>
+        <div class="budget-item" style="flex-direction: column; align-items: flex-start;">
+          <small>Loans</small>
+          <input type="number" class="budget-input nw-liab" data-key="loans" style="width: 100%;" placeholder="0.00">
+        </div>
+        <div class="budget-item" style="flex-direction: column; align-items: flex-start;">
+          <small>Credit Cards</small>
+          <input type="number" class="budget-input nw-liab" data-key="creditCards" style="width: 100%;" placeholder="0.00">
+        </div>
+        <div class="budget-item" style="flex-direction: column; align-items: flex-start;">
+          <small>Other Debt (EMIs)</small>
+          <input type="number" class="budget-input nw-liab" data-key="emis" style="width: 100%;" placeholder="0.00">
+        </div>
+      </div>
+    </div>
+    <div style="margin-top:20px; display:flex; justify-content:flex-end;">
+      <button class="btn" onclick="saveNetWorthSettings()">Update Net Worth</button>
+    </div>
+  </div>
+</div>
+
+  <script src="js/app.js"></script>
+  <script src="js/features.js"></script>
 </body>
 </html>

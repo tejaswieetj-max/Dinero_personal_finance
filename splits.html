@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Split Tracker</title>
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+  <link rel="stylesheet" href="css/features.css">
+</head>
+<body onload="loadUser()">
+  <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
+
+  <div class="layout">
+    <aside class="sidebar">
+      <h2>Dinero</h2>
+      <nav>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="transactions.html">Transactions</a>
+        <a href="bills.html">Bills</a>
+        <a class="logout-link" href="login.html">Logout</a>
+      </nav>
+    </aside>
+
+    <main class="content">
+      <div class="page-header">
+        <div class="page-title">
+          <h1>Split Tracker</h1>
+          <p>Keep track of shared expenses and IOUs.</p>
+        </div>
+
+        <div class="pill">
+          <img id="userAvatar" class="header-avatar" alt="User avatar">
+          <div>
+            <div style="font-weight:700;">Hi, <span id="username"></span></div>
+            <div style="color:var(--text-muted); font-size:12px;">Splits & IOUs</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="panel" style="flex:2;">
+          <h3 style="margin:0 0 12px;">Net Balances</h3>
+          <div id="splitSummaryCards" style="display:flex; gap:12px; flex-wrap:wrap;">
+            <!-- Dynamic summary pills -->
+          </div>
+        </div>
+        <div class="panel" style="flex:1;">
+          <h3 style="margin:0 0 12px;">Quick actions</h3>
+          <button class="btn" onclick="promptAddSplit()">Add Split</button>
+        </div>
+      </div>
+
+      <div class="row">
+         <div class="panel" style="flex:1;">
+            <p style="color:var(--text-muted); font-size:14px; margin-bottom:8px;">Total owed to you</p>
+            <h2 id="totalOwedToYou" class="positive">₹0.00</h2>
+         </div>
+         <div class="panel" style="flex:1;">
+            <p style="color:var(--text-muted); font-size:14px; margin-bottom:8px;">Total you owe</p>
+            <h2 id="totalYouOwe" class="negative">₹0.00</h2>
+         </div>
+      </div>
+
+      <div class="panel">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Person</th>
+              <th>Description</th>
+              <th style="text-align:right;">Amount</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="splitsBody">
+            <!-- Dynamic split rows -->
+          </tbody>
+        </table>
+      </div>
+    </main>
+  </div>
+
+  <script src="js/app.js"></script>
+  <script src="js/features.js"></script>
+</body>
+</html>

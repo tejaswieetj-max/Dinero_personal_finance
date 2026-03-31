@@ -4,6 +4,7 @@
   <title>Transactions</title>
   <link rel="stylesheet" href="css/main.css">
   <link rel="stylesheet" href="css/dashboard.css">
+  <link rel="stylesheet" href="css/features.css">
 </head>
 <body onload="loadUser()">
   <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
@@ -41,6 +42,7 @@
             <input class="input" type="text" placeholder="Search transactions (demo)">
           </div>
           <div style="display:flex; gap:10px; justify-content:flex-end; align-items:center;">
+            <button class="btn secondary" type="button" onclick="openBudgetModal()">Set Budgets</button>
             <button class="btn secondary" type="button">Export</button>
             <button class="btn" type="button">New Transfer</button>
           </div>
@@ -57,43 +59,30 @@
               <th style="text-align:right;">Amount</th>
             </tr>
           </thead>
-          <tbody>
-            <tr>
-              <td>Feb 11</td>
-              <td>Salary • NeoBank</td>
-              <td>Income</td>
-              <td class="amount positive" style="text-align:right;">+₹6,400.00</td>
-            </tr>
-            <tr>
-              <td>Feb 10</td>
-              <td>Rent • Landlord</td>
-              <td>Housing</td>
-              <td class="amount negative" style="text-align:right;">-₹1,850.00</td>
-            </tr>
-            <tr>
-              <td>Feb 09</td>
-              <td>Groceries • FreshMart</td>
-              <td>Food</td>
-              <td class="amount negative" style="text-align:right;">-₹96.42</td>
-            </tr>
-            <tr>
-              <td>Feb 08</td>
-              <td>Streaming • DineroFlix</td>
-              <td>Subscriptions</td>
-              <td class="amount negative" style="text-align:right;">-₹12.99</td>
-            </tr>
-            <tr>
-              <td>Feb 06</td>
-              <td>Card Refund • NeoShop</td>
-              <td>Refund</td>
-              <td class="amount positive" style="text-align:right;">+₹24.15</td>
-            </tr>
+          <tbody id="transactionsBody">
+            <!-- Dynamic transactions will be rendered here -->
           </tbody>
         </table>
       </div>
     </main>
   </div>
 
+  <div id="budgetModal" class="modal-overlay">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>Budget Settings</h2>
+        <button class="modal-close" onclick="closeBudgetModal()">&times;</button>
+      </div>
+      <div id="budgetList">
+        <!-- Dynamic budget items will be injected here -->
+      </div>
+      <div style="margin-top:20px; display:flex; justify-content:flex-end;">
+        <button class="btn" onclick="saveBudgetSettings()">Save Budgets</button>
+      </div>
+    </div>
+  </div>
+
   <script src="js/app.js"></script>
+  <script src="js/features.js"></script>
 </body>
 </html>
