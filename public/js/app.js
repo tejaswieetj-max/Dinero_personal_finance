@@ -474,3 +474,20 @@ function payBill(id) {
 }
 
 document.addEventListener("DOMContentLoaded", renderBills);
+// --- ATTACH EVENT LISTENERS ---
+document.addEventListener("DOMContentLoaded", () => {
+  // Check if we are on the login page by looking for the email input
+  const emailInput = document.getElementById("email");
+  if (emailInput) {
+    // Look for the login button or the form itself
+    const loginBtn = document.querySelector('button[onclick="login()"]') || document.querySelector('form');
+
+    // If you have <button onclick="login()"> in HTML, this ensures it works in Vite
+    if (loginBtn) {
+      loginBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        login();
+      });
+    }
+  }
+});
