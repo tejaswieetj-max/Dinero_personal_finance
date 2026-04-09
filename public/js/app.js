@@ -39,13 +39,19 @@ let localState = {
   user: JSON.parse(localStorage.getItem("dinero_user")) || null,
   account: JSON.parse(localStorage.getItem("accountState")) || INITIAL_BALANCE,
   bills: JSON.parse(localStorage.getItem("bills")) || DEFAULT_BILLS,
-  profiles: JSON.parse(localStorage.getItem("profiles")) || DEFAULT_PROFILES
+  profiles: JSON.parse(localStorage.getItem("profiles")) || DEFAULT_PROFILES,
+  transactions: JSON.parse(localStorage.getItem("transactions")) || [],
+  goals: JSON.parse(localStorage.getItem("goals")) || [],
+  splits: JSON.parse(localStorage.getItem("splits")) || []
 };
 
 function syncState() {
   localStorage.setItem("accountState", JSON.stringify(localState.account));
   localStorage.setItem("bills", JSON.stringify(localState.bills));
   localStorage.setItem("profiles", JSON.stringify(localState.profiles));
+  localStorage.setItem("transactions", JSON.stringify(localState.transactions));
+  localStorage.setItem("goals", JSON.stringify(localState.goals));
+  localStorage.setItem("splits", JSON.stringify(localState.splits));
   
   // Sync user if exists
   if (localState.user) {
@@ -106,7 +112,7 @@ async function login() {
     
     localStorage.setItem("dinero_session", JSON.stringify(mockSession));
     localStorage.setItem("dinero_user", JSON.stringify(mockSession.user));
-    window.location.href = "dashboard.html";
+    window.location.href = "profiles.html";
     return;
   }
 
@@ -341,6 +347,9 @@ function syncUI() {
 document.addEventListener("DOMContentLoaded", () => {
   loadUser();
   renderProfiles();
+  renderGoals();
+  renderSplits();
+  renderTransactions();
   syncUI(); // Ensure UI is synced on page load
 });
 
@@ -516,30 +525,13 @@ function payBill(id) {
   renderBills();
 
   // Update balance display on current page and sync across pages
-  const totalBalance = document.getElementById("totalBalance");
-  if (totalBalance) {
-    totalBalance.innerText = formatCurrency(state.balanceCents);
-  }
   
   // Force sync state to ensure persistence across pages
   syncState();
 }
 
-document.addEventListener("DOMContentLoaded", renderBills);
-
 // --- ATTACH EVENT LISTENERS ---
-document.addEventListener("DOMContentLoaded", () => {
-  const emailInput = document.getElementById("email");
-  if (emailInput) {
-    const loginBtn = document.querySelector('button[onclick="login()"]') || document.querySelector('.primary-btn');
-    if (loginBtn) {
-      loginBtn.addEventListener("click", (e) => {
-        e.preventDefault();
-        login();
-      });
-    }
-  }
-});
+document.getElementById('loginBtn')?.addEventListener('click', (e) => { e.preventDefault(); login(); });
 
 // --- WINDOW OBJECT ATTACHMENTS (for module compatibility) ---
 window.login = login;
@@ -567,6 +559,18 @@ window.saveBills = saveBills;
 window.renderBills = renderBills;
 window.computeBillStatus = computeBillStatus;
 window.formatCurrency = formatCurrency;
+window.getGoals = getGoals;
+window.saveGoals = saveGoals;
+window.addGoal = addGoal;
+window.renderGoals = renderGoals;
+window.getSplits = getSplits;
+window.saveSplits = saveSplits;
+window.addSplit = addSplit;
+window.renderSplits = renderSplits;
+window.getTransactions = getTransactions;
+window.saveTransactions = saveTransactions;
+window.addTransaction = addTransaction;
+window.renderTransactions = renderTransactions;
 
 // --- LOGIN BUTTON EVENT LISTENER FIX ---
 document.getElementById('loginBtn')?.addEventListener('click', (e) => { e.preventDefault(); login(); });
