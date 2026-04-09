@@ -11,5 +11,3 @@ dist/
 # OS JUNK: Hidden files from Windows/Mac
 .DS_Store
 Thumbs.db
-
-node_modules/
