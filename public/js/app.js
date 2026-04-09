@@ -21,11 +21,6 @@ const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
 const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 // ---------- CONSTANTS ----------
-const MOCK_USERS = [
-  { email: "tejas@gmail.com", password: "password123", id: "mock-user-tejas" },
-  { email: "admin@dinero.com", password: "admin123", id: "mock-user-admin" }
-];
-
 const DEFAULT_PROFILES = [
   { name: "Zeph", avatar: "assets/avatars/avatar1.png" },
   { name: "Tejas", avatar: "assets/avatars/avatar2.png" },
@@ -77,27 +72,6 @@ async function login() {
     return;
   }
 
-  // --- MOCK BACKEND CHECK ---
-  const mockUser = MOCK_USERS.find(u => u.email === email && u.password === password);
-  
-  if (mockUser) {
-    const mockSession = {
-      access_token: "mock-token-" + Date.now(),
-      user: {
-        id: mockUser.id,
-        email: mockUser.email,
-        aud: "authenticated",
-        role: "authenticated"
-      }
-    };
-    
-    localStorage.setItem("dinero_session", JSON.stringify(mockSession));
-    localStorage.setItem("dinero_user", JSON.stringify(mockSession.user));
-    window.location.href = "dashboard.html";
-    return;
-  }
-
-  // --- FALLBACK TO SUPABASE ---
   const { data, error } = await supabaseClient.auth.signInWithPassword({
     email,
     password,
