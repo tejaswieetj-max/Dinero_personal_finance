@@ -1,3 +1,4 @@
+import { createClient } from '@supabase/supabase-js';
 
 function applyTheme() {
   const theme = localStorage.getItem("theme");
@@ -16,7 +17,7 @@ document.addEventListener("DOMContentLoaded", applyTheme);
 // ---------- SUPABASE AUTH ----------
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
-const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 async function login() {
 
