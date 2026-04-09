@@ -1,8 +1,8 @@
 // ---------- MOCK BACKEND ----------
 // Mock user credentials
 const MOCK_USERS = [
-  { email: "admin@dinero.com", password: "password123", id: "mock-user-admin", name: "Admin" },
-  { email: "tejas@dinero.com", password: "dinero2026", id: "mock-user-tejas", name: "Tejas" }
+  { email: "admin@dinero.com", password: "password123", id: "admin", name: "Admin" },
+  { email: "tejas@gmail.com", password: "1234", id: "tejas", name: "Tejas" }
 ];
 
 // ---------- CONSTANTS ----------
