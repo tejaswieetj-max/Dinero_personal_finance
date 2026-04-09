@@ -570,3 +570,6 @@ window.formatCurrency = formatCurrency;
 
 // --- LOGIN BUTTON EVENT LISTENER FIX ---
 document.getElementById('loginBtn')?.addEventListener('click', (e) => { e.preventDefault(); login(); });
+
+// Ensure login function is available globally
+window.login = login;
