@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Bills</title>
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/features.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body onload="loadUser()">
+  <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
+
+  <div class="layout">
+    <aside class="sidebar">
+      <h2>Dinero</h2>
+      <nav>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="transactions.html">Transactions</a>
+        <a class="active" href="bills.html">Bills</a>
+        <a class="logout-link" href="#" onclick="logout()">Logout</a>
+      </nav>
+    </aside>
+
+    <main class="content">
+      <div class="page-header">
+        <div class="page-title">
+          <h1>Bills</h1>
+          <p>Track what’s due and keep everything paid on time.</p>
+        </div>
+
+        <div class="pill">
+          <img id="userAvatar" class="header-avatar" alt="User avatar">
+          <div>
+            <div style="font-weight:700;">Hi, <span id="username" class="user-name-display"></span></div>
+            <div style="color:var(--text-muted); font-size:12px;">Due dates</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="panel">
+          <h3 style="margin:0 0 12px;">This month</h3>
+          <div style="display:flex; gap:12px; flex-wrap:wrap;">
+            <div class="pill" style="flex:1; min-width:180px; justify-content:space-between;">
+              <span style="color:var(--text-muted);">Upcoming</span>
+              <strong id="billsUpcomingCount">0</strong>
+            </div>
+            <div class="pill" style="flex:1; min-width:180px; justify-content:space-between;">
+              <span style="color:var(--text-muted);">Paid</span>
+              <strong id="billsPaidCount">0</strong>
+            </div>
+            <div class="pill" style="flex:1; min-width:180px; justify-content:space-between;">
+              <span style="color:var(--text-muted);">Total due</span>
+              <strong id="billsTotalDue">₹0.00</strong>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h3 style="margin:0 0 12px;">Quick actions</h3>
+          <div style="display:flex; gap:10px; flex-wrap:wrap;">
+            <button class="btn secondary" type="button" onclick="promptAddBill()">Add bill</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <table class="table" aria-label="Bills table">
+          <thead>
+            <tr>
+              <th>Bill</th>
+              <th>Due</th>
+              <th>Status</th>
+              <th style="text-align:right;">Amount</th>
+            </tr>
+          </thead>
+          <tbody id="billsBody">
+          </tbody>
+        </table>
+      </div>
+    </main>
+  </div>
+
+  <script src="js/app.js"></script>
+  <script src="js/features.js"></script>
+</body>
+</html>

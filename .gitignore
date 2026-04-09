@@ -1,0 +1,13 @@
+.env# SECURITY: Never push your database keys
+.env
+
+# DEPENDENCIES: Vercel will install these on its own server
+node_modules/
+
+# BUILD JUNK: Files created during the "vite build" process
+dist/
+.vercel/
+
+# OS JUNK: Hidden files from Windows/Mac
+.DS_Store
+Thumbs.db
