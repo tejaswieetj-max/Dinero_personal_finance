@@ -14,8 +14,8 @@ function toggleTheme() {
 }
 document.addEventListener("DOMContentLoaded", applyTheme);
 // ---------- SUPABASE AUTH ----------
-const SUPABASE_URL = 'https://YOUR_SUPABASE_URL.supabase.co'; // REPLACE THIS
-const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY'; // REPLACE THIS
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
+const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 async function login() {
@@ -239,7 +239,7 @@ async function loadUser() {
   if (!session) return;
 
   const user = session.user;
-  
+
   const username = document.getElementById("username");
   if (username) {
     username.innerText = user.email.split('@')[0];
@@ -316,10 +316,10 @@ function formatCurrency(cents) {
 
 const DEFAULT_BILLS = [
   { id: "bill-1", name: "Electricity • City Power", due: "2026-02-14", amountCents: 12840, paid: false },
-  { id: "bill-2", name: "Internet • FiberNet",      due: "2026-02-16", amountCents: 7999,  paid: false },
-  { id: "bill-3", name: "Credit Card • NeoBank",    due: "2026-02-20", amountCents: 20386, paid: false },
-  { id: "bill-4", name: "Streaming • DineroFlix",   due: "2026-02-02", amountCents: 1299,  paid: true  },
-  { id: "bill-5", name: "Phone • MobileCo",         due: "2026-01-29", amountCents: 8701,  paid: false },
+  { id: "bill-2", name: "Internet • FiberNet", due: "2026-02-16", amountCents: 7999, paid: false },
+  { id: "bill-3", name: "Credit Card • NeoBank", due: "2026-02-20", amountCents: 20386, paid: false },
+  { id: "bill-4", name: "Streaming • DineroFlix", due: "2026-02-02", amountCents: 1299, paid: true },
+  { id: "bill-5", name: "Phone • MobileCo", due: "2026-01-29", amountCents: 8701, paid: false },
 ];
 
 function getBills() {
