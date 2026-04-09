@@ -1,24 +1,9 @@
-import { createClient } from '@supabase/supabase-js';
-
-function applyTheme() {
-  const theme = localStorage.getItem("theme");
-  if (theme === "dark") {
-    document.body.classList.add("dark");
-  }
-}
-function toggleTheme() {
-  document.body.classList.toggle("dark");
-  localStorage.setItem(
-    "theme",
-    document.body.classList.contains("dark") ? "dark" : "light"
-  );
-}
-document.addEventListener("DOMContentLoaded", applyTheme);
-
-// ---------- SUPABASE AUTH ----------
-const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
-const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
-const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+// ---------- MOCK BACKEND ----------
+// Mock user credentials
+const MOCK_USERS = [
+  { email: "admin@dinero.com", password: "password123", id: "mock-user-admin", name: "Admin" },
+  { email: "tejas@dinero.com", password: "dinero2026", id: "mock-user-tejas", name: "Tejas" }
+];
 
 // ---------- CONSTANTS ----------
 const DEFAULT_PROFILES = [
@@ -45,8 +30,10 @@ const DEFAULT_BILLS = [
 
 const INITIAL_BALANCE = { balanceCents: 2456200 };
 
-// ---------- LOCAL STATE & INITIALIZATION ----------
+// ---------- CENTRAL STATE MANAGEMENT ----------
+// Initialize localState by reading from localStorage
 let localState = {
+  user: JSON.parse(localStorage.getItem("dinero_user")) || null,
   account: JSON.parse(localStorage.getItem("accountState")) || INITIAL_BALANCE,
   bills: JSON.parse(localStorage.getItem("bills")) || DEFAULT_BILLS,
   profiles: JSON.parse(localStorage.getItem("profiles")) || DEFAULT_PROFILES
@@ -56,10 +43,33 @@ function syncState() {
   localStorage.setItem("accountState", JSON.stringify(localState.account));
   localStorage.setItem("bills", JSON.stringify(localState.bills));
   localStorage.setItem("profiles", JSON.stringify(localState.profiles));
+  
+  // Sync user if exists
+  if (localState.user) {
+    localStorage.setItem("dinero_user", JSON.stringify(localState.user));
+  }
 }
 
 // Initial sync to ensure data existence
 syncState();
+
+// ---------- THEME FUNCTIONS ----------
+function applyTheme() {
+  const theme = localStorage.getItem("theme");
+  if (theme === "dark") {
+    document.body.classList.add("dark");
+  }
+}
+
+function toggleTheme() {
+  document.body.classList.toggle("dark");
+  localStorage.setItem(
+    "theme",
+    document.body.classList.contains("dark") ? "dark" : "light"
+  );
+}
+
+document.addEventListener("DOMContentLoaded", applyTheme);
 
 // ---------- AUTHENTICATION ----------
 async function login() {
@@ -72,22 +82,41 @@ async function login() {
     return;
   }
 
-  const { data, error } = await supabaseClient.auth.signInWithPassword({
-    email,
-    password,
-  });
-
-  if (error) {
-    if (errorEl) errorEl.innerText = error.message;
-  } else {
-    localStorage.setItem("dinero_session", JSON.stringify(data.session));
-    localStorage.setItem("dinero_user", JSON.stringify(data.user));
+  // --- MOCK BACKEND CHECK ---
+  const mockUser = MOCK_USERS.find(u => u.email === email && u.password === password);
+  
+  if (mockUser) {
+    const mockSession = {
+      access_token: "mock-token-" + Date.now(),
+      user: {
+        id: mockUser.id,
+        email: mockUser.email,
+        name: mockUser.name,
+        aud: "authenticated",
+        role: "authenticated"
+      }
+    };
+    
+    // Update localState with user info
+    localState.user = mockSession.user;
+    syncState();
+    
+    localStorage.setItem("dinero_session", JSON.stringify(mockSession));
+    localStorage.setItem("dinero_user", JSON.stringify(mockSession.user));
     window.location.href = "dashboard.html";
+    return;
   }
+
+  // --- NO FALLBACK - MOCK ONLY ---
+  if (errorEl) errorEl.innerText = "Invalid email or password";
 }
 
 async function logout() {
-  await supabaseClient.auth.signOut();
+  // Clear local state
+  localState.user = null;
+  syncState();
+  
+  // Clear session storage
   localStorage.removeItem("dinero_session");
   localStorage.removeItem("dinero_user");
   window.location.href = "login.html";
@@ -99,7 +128,16 @@ function authGuard() {
     window.location.href = "login.html";
     return null;
   }
-  return JSON.parse(sessionRaw);
+  
+  const session = JSON.parse(sessionRaw);
+  
+  // Update localState with user from session
+  if (session.user && !localState.user) {
+    localState.user = session.user;
+    syncState();
+  }
+  
+  return session;
 }
 
 // ---------- PROFILES ----------
@@ -261,20 +299,19 @@ async function loadUser() {
 
   const user = session.user;
 
-  const username = document.getElementById("username");
-  if (username) {
-    username.innerText = user.email.split('@')[0];
+  // Update localState with user info
+  if (!localState.user) {
+    localState.user = user;
+    syncState();
   }
+
+  // Sync UI with user data
+  syncUI();
 
   const avatar = document.getElementById("userAvatar");
   if (avatar) {
     // Default avatar
     avatar.src = "assets/avatars/avatar1.png";
-  }
-
-  const cardHolder = document.getElementById("cardHolderName");
-  if (cardHolder) {
-    cardHolder.innerText = user.email.split('@')[0];
   }
 
   // Account balance (for dashboard + bills)
@@ -285,8 +322,24 @@ async function loadUser() {
   }
 }
 
-document.addEventListener("DOMContentLoaded", loadUser);
-document.addEventListener("DOMContentLoaded", renderProfiles);
+// ---------- UI SYNCHRONIZATION ----------
+function syncUI() {
+  // Find all elements with class .user-name-display
+  const userNameElements = document.querySelectorAll('.user-name-display');
+  
+  if (localState.user) {
+    const displayName = localState.user.name || localState.user.email.split('@')[0];
+    userNameElements.forEach(element => {
+      element.innerText = displayName;
+    });
+  }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  loadUser();
+  renderProfiles();
+  syncUI(); // Ensure UI is synced on page load
+});
 
 // ---------- FACE ID ----------
 document.addEventListener("DOMContentLoaded", function () {
@@ -308,7 +361,6 @@ document.addEventListener("DOMContentLoaded", function () {
     btn.style.display = "inline-block";
   }, 2000); // 2 seconds scanning
 });
-
 
 // ---------- ACCOUNT & BILLS ----------
 function getAccountState() {
@@ -460,10 +512,14 @@ function payBill(id) {
 
   renderBills();
 
+  // Update balance display on current page and sync across pages
   const totalBalance = document.getElementById("totalBalance");
   if (totalBalance) {
     totalBalance.innerText = formatCurrency(state.balanceCents);
   }
+  
+  // Force sync state to ensure persistence across pages
+  syncState();
 }
 
 document.addEventListener("DOMContentLoaded", renderBills);
