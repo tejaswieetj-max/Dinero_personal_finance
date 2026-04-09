@@ -19,25 +19,36 @@ const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 async function login() {
+  alert("Login function started!"); // Debug 1
+
   const email = document.getElementById("email")?.value;
   const password = document.getElementById("password")?.value;
   const errorEl = document.getElementById("error");
 
+  alert("Checking email: " + email); // Debug 2
+
   if (!email || !password) {
+    alert("Missing email or password");
     if (errorEl) errorEl.innerText = "Please enter both email and password";
     return;
   }
 
-  const { data, error } = await supabaseClient.auth.signInWithPassword({
-    email,
-    password,
-  });
+  try {
+    const { data, error } = await supabaseClient.auth.signInWithPassword({
+      email,
+      password,
+    });
 
-  if (error) {
-    if (errorEl) errorEl.innerText = error.message;
-  } else {
-    localStorage.setItem("dinero_session", JSON.stringify(data.session));
-    window.location.href = "dashboard.html";
+    if (error) {
+      alert("Supabase Error: " + error.message); // Debug 3
+      if (errorEl) errorEl.innerText = error.message;
+    } else {
+      alert("Success! Redirecting..."); // Debug 4
+      localStorage.setItem("dinero_session", JSON.stringify(data.session));
+      window.location.href = "dashboard.html";
+    }
+  } catch (err) {
+    alert("System Crash: " + err.message); // Debug 5
   }
 }
 
