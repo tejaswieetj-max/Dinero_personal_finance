@@ -567,3 +567,6 @@ window.saveBills = saveBills;
 window.renderBills = renderBills;
 window.computeBillStatus = computeBillStatus;
 window.formatCurrency = formatCurrency;
+
+// --- LOGIN BUTTON EVENT LISTENER FIX ---
+document.getElementById('loginBtn')?.addEventListener('click', (e) => { e.preventDefault(); login(); });
