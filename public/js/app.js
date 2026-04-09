@@ -14,73 +14,18 @@ function toggleTheme() {
   );
 }
 document.addEventListener("DOMContentLoaded", applyTheme);
+
 // ---------- SUPABASE AUTH ----------
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
 const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-async function login() {
+// ---------- CONSTANTS ----------
+const MOCK_USERS = [
+  { email: "tejas@gmail.com", password: "password123", id: "mock-user-tejas" },
+  { email: "admin@dinero.com", password: "admin123", id: "mock-user-admin" }
+];
 
-  const email = document.getElementById("email")?.value;
-
-  const password = document.getElementById("password")?.value;
-
-  const errorEl = document.getElementById("error");
-
-
-
-  if (!email || !password) {
-
-    if (errorEl) errorEl.innerText = "Please enter both email and password";
-
-    return;
-
-  }
-
-
-
-  const { data, error } = await supabaseClient.auth.signInWithPassword({
-
-    email,
-
-    password,
-
-  });
-
-
-
-  if (error) {
-
-    if (errorEl) errorEl.innerText = error.message;
-
-  } else {
-
-    localStorage.setItem("dinero_session", JSON.stringify(data.session));
-
-    window.location.href = "dashboard.html";
-
-  }
-
-}
-
-async function logout() {
-  await supabaseClient.auth.signOut();
-  localStorage.removeItem("dinero_session");
-  window.location.href = "login.html";
-}
-
-function authGuard() {
-  const sessionRaw = localStorage.getItem("dinero_session");
-  if (!sessionRaw) {
-    window.location.href = "login.html";
-    return null;
-  }
-  return JSON.parse(sessionRaw);
-}
-
-
-
-// ---------- PROFILES ----------
 const DEFAULT_PROFILES = [
   { name: "Zeph", avatar: "assets/avatars/avatar1.png" },
   { name: "Tejas", avatar: "assets/avatars/avatar2.png" },
@@ -95,23 +40,104 @@ const DEFAULT_PROFILES = [
   { name: "Aditi", avatar: "assets/avatars/avatar1.png" },
 ];
 
+const DEFAULT_BILLS = [
+  { id: "bill-1", name: "Electricity • City Power", due: "2026-02-14", amountCents: 12840, paid: false },
+  { id: "bill-2", name: "Internet • FiberNet", due: "2026-02-16", amountCents: 7999, paid: false },
+  { id: "bill-3", name: "Credit Card • NeoBank", due: "2026-02-20", amountCents: 20386, paid: false },
+  { id: "bill-4", name: "Streaming • DineroFlix", due: "2026-02-02", amountCents: 1299, paid: true },
+  { id: "bill-5", name: "Phone • MobileCo", due: "2026-01-29", amountCents: 8701, paid: false },
+];
+
+const INITIAL_BALANCE = { balanceCents: 2456200 };
+
+// ---------- LOCAL STATE & INITIALIZATION ----------
+let localState = {
+  account: JSON.parse(localStorage.getItem("accountState")) || INITIAL_BALANCE,
+  bills: JSON.parse(localStorage.getItem("bills")) || DEFAULT_BILLS,
+  profiles: JSON.parse(localStorage.getItem("profiles")) || DEFAULT_PROFILES
+};
+
+function syncState() {
+  localStorage.setItem("accountState", JSON.stringify(localState.account));
+  localStorage.setItem("bills", JSON.stringify(localState.bills));
+  localStorage.setItem("profiles", JSON.stringify(localState.profiles));
+}
+
+// Initial sync to ensure data existence
+syncState();
+
+// ---------- AUTHENTICATION ----------
+async function login() {
+  const email = document.getElementById("email")?.value;
+  const password = document.getElementById("password")?.value;
+  const errorEl = document.getElementById("error");
+
+  if (!email || !password) {
+    if (errorEl) errorEl.innerText = "Please enter both email and password";
+    return;
+  }
+
+  // --- MOCK BACKEND CHECK ---
+  const mockUser = MOCK_USERS.find(u => u.email === email && u.password === password);
+  
+  if (mockUser) {
+    const mockSession = {
+      access_token: "mock-token-" + Date.now(),
+      user: {
+        id: mockUser.id,
+        email: mockUser.email,
+        aud: "authenticated",
+        role: "authenticated"
+      }
+    };
+    
+    localStorage.setItem("dinero_session", JSON.stringify(mockSession));
+    localStorage.setItem("dinero_user", JSON.stringify(mockSession.user));
+    window.location.href = "dashboard.html";
+    return;
+  }
+
+  // --- FALLBACK TO SUPABASE ---
+  const { data, error } = await supabaseClient.auth.signInWithPassword({
+    email,
+    password,
+  });
+
+  if (error) {
+    if (errorEl) errorEl.innerText = error.message;
+  } else {
+    localStorage.setItem("dinero_session", JSON.stringify(data.session));
+    localStorage.setItem("dinero_user", JSON.stringify(data.user));
+    window.location.href = "dashboard.html";
+  }
+}
+
+async function logout() {
+  await supabaseClient.auth.signOut();
+  localStorage.removeItem("dinero_session");
+  localStorage.removeItem("dinero_user");
+  window.location.href = "login.html";
+}
+
+function authGuard() {
+  const sessionRaw = localStorage.getItem("dinero_session");
+  if (!sessionRaw) {
+    window.location.href = "login.html";
+    return null;
+  }
+  return JSON.parse(sessionRaw);
+}
+
+// ---------- PROFILES ----------
 let isManagingProfiles = false;
 
 function getProfiles() {
-  try {
-    const stored = localStorage.getItem("profiles");
-    if (stored) {
-      const parsed = JSON.parse(stored);
-      if (Array.isArray(parsed) && parsed.length) return parsed;
-    }
-  } catch (e) {
-    console.warn("Failed to read profiles from storage", e);
-  }
-  return DEFAULT_PROFILES;
+  return localState.profiles;
 }
 
 function saveProfiles(list) {
-  localStorage.setItem("profiles", JSON.stringify(list));
+  localState.profiles = list;
+  syncState();
 }
 
 function selectProfile(profile) {
@@ -213,7 +239,6 @@ function toggleManageAccounts() {
   renderProfiles();
 }
 
-
 // ---------- SECURITY ----------
 let enteredPin = "";
 
@@ -288,6 +313,7 @@ async function loadUser() {
 
 document.addEventListener("DOMContentLoaded", loadUser);
 document.addEventListener("DOMContentLoaded", renderProfiles);
+
 // ---------- FACE ID ----------
 document.addEventListener("DOMContentLoaded", function () {
   const faceContainer = document.getElementById("faceContainer");
@@ -306,60 +332,31 @@ document.addEventListener("DOMContentLoaded", function () {
     sub.innerText = "Your identity has been verified. Welcome back!";
 
     btn.style.display = "inline-block";
-
   }, 2000); // 2 seconds scanning
 });
 
 
 // ---------- ACCOUNT & BILLS ----------
 function getAccountState() {
-  const raw = localStorage.getItem("accountState");
-  if (raw) {
-    try {
-      const parsed = JSON.parse(raw);
-      if (typeof parsed.balanceCents === "number") return parsed;
-    } catch (e) {
-      console.warn("Failed to parse accountState", e);
-    }
-  }
-  // default starting balance: 24,562.00
-  const initial = { balanceCents: 2456200 };
-  localStorage.setItem("accountState", JSON.stringify(initial));
-  return initial;
+  return localState.account;
 }
 
 function saveAccountState(state) {
-  localStorage.setItem("accountState", JSON.stringify(state));
+  localState.account = state;
+  syncState();
 }
 
 function formatCurrency(cents) {
   return `₹${(cents / 100).toFixed(2)}`;
 }
 
-const DEFAULT_BILLS = [
-  { id: "bill-1", name: "Electricity • City Power", due: "2026-02-14", amountCents: 12840, paid: false },
-  { id: "bill-2", name: "Internet • FiberNet", due: "2026-02-16", amountCents: 7999, paid: false },
-  { id: "bill-3", name: "Credit Card • NeoBank", due: "2026-02-20", amountCents: 20386, paid: false },
-  { id: "bill-4", name: "Streaming • DineroFlix", due: "2026-02-02", amountCents: 1299, paid: true },
-  { id: "bill-5", name: "Phone • MobileCo", due: "2026-01-29", amountCents: 8701, paid: false },
-];
-
 function getBills() {
-  const raw = localStorage.getItem("bills");
-  if (raw) {
-    try {
-      const list = JSON.parse(raw);
-      if (Array.isArray(list)) return list;
-    } catch (e) {
-      console.warn("Failed to parse bills", e);
-    }
-  }
-  localStorage.setItem("bills", JSON.stringify(DEFAULT_BILLS));
-  return DEFAULT_BILLS;
+  return localState.bills;
 }
 
 function saveBills(list) {
-  localStorage.setItem("bills", JSON.stringify(list));
+  localState.bills = list;
+  syncState();
 }
 
 function computeBillStatus(bill) {
@@ -496,15 +493,12 @@ function payBill(id) {
 }
 
 document.addEventListener("DOMContentLoaded", renderBills);
+
 // --- ATTACH EVENT LISTENERS ---
 document.addEventListener("DOMContentLoaded", () => {
-  // Check if we are on the login page by looking for the email input
   const emailInput = document.getElementById("email");
   if (emailInput) {
-    // Look for the login button or the form itself
-    const loginBtn = document.querySelector('button[onclick="login()"]') || document.querySelector('form');
-
-    // If you have <button onclick="login()"> in HTML, this ensures it works in Vite
+    const loginBtn = document.querySelector('button[onclick="login()"]') || document.querySelector('.primary-btn');
     if (loginBtn) {
       loginBtn.addEventListener("click", (e) => {
         e.preventDefault();
