@@ -1,3 +1,6 @@
+// Emergency Vercel Deployment Fix
+console.log('App Initialized');
+
 // ---------- MOCK BACKEND ----------
 // Mock user credentials
 const MOCK_USERS = [
@@ -537,3 +540,30 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 });
+
+// --- WINDOW OBJECT ATTACHMENTS (for module compatibility) ---
+window.login = login;
+window.logout = logout;
+window.authGuard = authGuard;
+window.payBill = payBill;
+window.promptAddBill = promptAddBill;
+window.toggleTheme = toggleTheme;
+window.applyTheme = applyTheme;
+window.loadUser = loadUser;
+window.syncUI = syncUI;
+window.renderProfiles = renderProfiles;
+window.addProfile = addProfile;
+window.toggleManageAccounts = toggleManageAccounts;
+window.selectProfile = selectProfile;
+window.pressKey = pressKey;
+window.deleteKey = deleteKey;
+window.verifyPin = verifyPin;
+window.getProfiles = getProfiles;
+window.saveProfiles = saveProfiles;
+window.getAccountState = getAccountState;
+window.saveAccountState = saveAccountState;
+window.getBills = getBills;
+window.saveBills = saveBills;
+window.renderBills = renderBills;
+window.computeBillStatus = computeBillStatus;
+window.formatCurrency = formatCurrency;
