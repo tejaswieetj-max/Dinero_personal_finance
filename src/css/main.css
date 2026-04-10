@@ -23,6 +23,13 @@ body.dark {
   --error: #f87171;
 }
 
+/* ---------- RUPEE SYMBOL FIX ---------- */
+.rupee-symbol {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  font-weight: normal;
+  font-style: normal;
+}
+
 /* ---------- BASE BODY ---------- */
 body {
   margin: 0;

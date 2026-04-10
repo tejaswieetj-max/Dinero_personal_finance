@@ -1,13 +1,13 @@
 /* Import existing CSS without modification */
-@import '../public/css/main.css';
-@import '../public/css/login.css';
-@import '../public/css/dashboard.css';
-@import '../public/css/features.css';
-@import '../public/css/profiles.css';
-@import '../public/css/auth.css';
-@import '../public/css/auth-method.css';
-@import '../public/css/face-id.css';
-@import '../public/css/security.css';
+@import './css/main.css';
+@import './css/login.css';
+@import './css/dashboard.css';
+@import './css/features.css';
+@import './css/profiles.css';
+@import './css/auth.css';
+@import './css/auth-method.css';
+@import './css/face-id.css';
+@import './css/security.css';
 
 /* Ensure CSS is loaded - test styles */
 body {

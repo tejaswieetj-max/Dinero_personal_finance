@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import '../public/css/main.css';
-import '../public/css/face-id.css';
+import '../css/main.css';
+import '../css/face-id.css';
 
 const FaceID = () => {
   const [isScanning, setIsScanning] = useState(true);
@@ -28,7 +28,7 @@ const FaceID = () => {
     <div className="face-wrapper">
       <div className="face-container" id="faceContainer">
         <div className={`face-icon ${isSuccess ? 'success' : ''}`}>
-          {isSuccess ? 'â' : 'ð¤'}
+          {isSuccess ? '✓' : '👤'}
         </div>
         <h2 id="faceTitle">
           {isScanning ? 'Scanning...' : 'Authentication Successful'}

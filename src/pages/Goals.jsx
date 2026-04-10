@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
-import '../public/css/main.css';
-import '../public/css/dashboard.css';
-import '../public/css/features.css';
+import '../css/main.css';
+import '../css/dashboard.css';
+import '../css/features.css';
 
 // Mock backend data from original app.js
 const MOCK_GOALS = [
@@ -88,7 +88,7 @@ const Goals = () => {
               />
             </div>
             <div>
-              <label>Target Amount (â)</label>
+              <label>Target Amount (<span className="rupee-symbol">₹</span>)</label>
               <input
                 className="input"
                 type="number"
@@ -100,7 +100,7 @@ const Goals = () => {
           </div>
           <div className="row">
             <div>
-              <label>Current Amount (â)</label>
+              <label>Current Amount (<span className="rupee-symbol">₹</span>)</label>
               <input
                 className="input"
                 type="number"
@@ -135,7 +135,7 @@ const Goals = () => {
             <div key={goal.id} className="card">
               <div className="card-icon">ð</div>
               <h3>{goal.title}</h3>
-              <p className="amount positive">â{(goal.current / 100).toFixed(2)} / â{(goal.target / 100).toFixed(2)}</p>
+              <p className="amount positive"><span className="rupee-symbol">₹</span>{(goal.current / 100).toFixed(2)} / <span className="rupee-symbol">₹</span>{(goal.target / 100).toFixed(2)}</p>
               <div className="card-trend positive">
                 <span>{progress.toFixed(1)}% Complete</span>
               </div>

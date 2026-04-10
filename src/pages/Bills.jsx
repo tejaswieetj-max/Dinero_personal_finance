@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
-import '../public/css/main.css';
-import '../public/css/dashboard.css';
-import '../public/css/features.css';
+import '../css/main.css';
+import '../css/dashboard.css';
+import '../css/features.css';
 
 // Mock backend data from original app.js
 const MOCK_BILLS = [
@@ -14,15 +14,53 @@ const MOCK_BILLS = [
 ];
 
 const Bills = () => {
-  const { bills, payBill } = useApp();
+  const { bills, payBill, addBill, addTransaction } = useApp();
+  const [showAddForm, setShowAddForm] = useState(false);
+  const [newBill, setNewBill] = useState({
+    name: '',
+    amount: '',
+    due: ''
+  });
   
   // Use mock bills if no bills in state
   const displayBills = bills.length > 0 ? bills : MOCK_BILLS;
 
   const handlePayBill = (billId) => {
     if (window.confirm('Are you sure you want to pay this bill?')) {
-      payBill(billId);
+      const bill = displayBills.find(b => b.id === billId);
+      if (bill) {
+        // Mark bill as paid
+        payBill(billId);
+        // Create transaction entry
+        addTransaction({
+          id: `tx-bill-${Date.now()}`,
+          date: new Date().toISOString().split('T')[0],
+          desc: bill.name,
+          category: 'Bills',
+          amount: bill.amount,
+          type: 'debit'
+        });
+      }
     }
+  };
+
+  const handleAddBill = () => {
+    if (!newBill.name || !newBill.amount || !newBill.due) {
+      alert('Please fill in all fields');
+      return;
+    }
+    
+    const billToAdd = {
+      id: `bill-${Date.now()}`,
+      name: newBill.name,
+      amount: parseFloat(newBill.amount) * 100, // Convert to cents
+      due: newBill.due,
+      status: 'unpaid'
+    };
+    
+    addBill(billToAdd);
+    setNewBill({ name: '', amount: '', due: '' });
+    setShowAddForm(false);
   };
 
   const getStatusBadge = (status) => {
@@ -57,8 +95,66 @@ const Bills = () => {
         </div>
         <div className="panel">
           <h4>Total Due</h4>
-          <p className="amount negative">â{(totalDue / 100).toFixed(2)}</p>
+          <p className="amount negative"><span className="rupee-symbol">₹</span>{(totalDue / 100).toFixed(2)}</p>
         </div>
+      </div>
+
+      {showAddForm && (
+        <div className="panel">
+          <div className="page-header">
+            <div className="page-title">
+              <h3>Add New Bill</h3>
+              <p>Enter bill details</p>
+            </div>
+          </div>
+          <div className="row">
+            <div>
+              <label>Bill Name</label>
+              <input
+                className="input"
+                type="text"
+                value={newBill.name}
+                onChange={(e) => setNewBill({...newBill, name: e.target.value})}
+                placeholder="e.g., Electricity • City Power"
+              />
+            </div>
+            <div>
+              <label>Amount (<span className="rupee-symbol">₹</span>)</label>
+              <input
+                className="input"
+                type="number"
+                value={newBill.amount}
+                onChange={(e) => setNewBill({...newBill, amount: e.target.value})}
+                placeholder="128.40"
+              />
+            </div>
+          </div>
+          <div className="row">
+            <div>
+              <label>Due Date</label>
+              <input
+                className="input"
+                type="date"
+                value={newBill.due}
+                onChange={(e) => setNewBill({...newBill, due: e.target.value})}
+              />
+            </div>
+          </div>
+          <div className="row">
+            <button onClick={handleAddBill} className="btn">Add Bill</button>
+            <button onClick={() => setShowAddForm(false)} className="btn secondary">Cancel</button>
+          </div>
+        </div>
+      )}
+
+      <div className="row" style={{ marginBottom: '20px' }}>
+        <button 
+          className="btn"
+          onClick={() => setShowAddForm(true)}
+          style={{ width: '100%' }}
+        >
+          + Add Bill
+        </button>
       </div>
 
       <div className="panel">
@@ -83,7 +179,7 @@ const Bills = () => {
               <tr key={bill.id}>
                 <td>{bill.name}</td>
                 <td>{bill.due}</td>
-                <td className="amount">â{(bill.amount / 100).toFixed(2)}</td>
+                <td className="amount"><span className="rupee-symbol">₹</span>{(bill.amount / 100).toFixed(2)}</td>
                 <td>
                   <span className={`badge ${bill.status === 'paid' ? 'paid' : 'overdue'}`}>
                     {getStatusText(bill.status)}
@@ -99,7 +195,7 @@ const Bills = () => {
                     </button>
                   )}
                   {bill.status === 'paid' && (
-                    <span className="badge paid">â Paid</span>
+                    <span className="badge paid"><span className="rupee-symbol">₹</span> Paid</span>
                   )}
                 </td>
               </tr>

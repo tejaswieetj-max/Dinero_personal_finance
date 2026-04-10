@@ -1,0 +1,178 @@
+/* ---------- SECURITY PAGE STYLES ---------- */
+
+/* Centered Container */
+.security-wrapper {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: var(--bg-gradient);
+}
+
+.security-container {
+  background: var(--card-bg);
+  border-radius: 24px;
+  padding: 40px 32px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  text-align: center;
+  max-width: 400px;
+  width: 100%;
+}
+
+/* Title */
+.security-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: 32px;
+}
+
+/* PIN Indicators - Horizontal Layout */
+.pin-indicators {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-bottom: 40px;
+}
+
+.pin-indicator {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid #cbd5e1;
+  background: transparent;
+  transition: all 0.3s ease;
+}
+
+.pin-indicator.filled {
+  background: var(--primary);
+  border-color: var(--primary);
+  transform: scale(1.1);
+}
+
+/* Keypad Grid Layout */
+.keypad-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 32px;
+}
+
+/* Modern Button Styling */
+.keypad-btn {
+  aspect-ratio: 1;
+  border: none;
+  border-radius: 12px;
+  background: var(--card-bg);
+  color: var(--text-main);
+  font-size: 24px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.keypad-btn:hover {
+  background: var(--primary);
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.keypad-btn:active {
+  transform: scale(0.95);
+}
+
+.keypad-btn:focus {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+/* Delete Button Special Styling */
+.keypad-btn-delete {
+  background: #f1f5f9;
+  color: #ef4444;
+}
+
+.keypad-btn-delete:hover {
+  background: #ef4444;
+  color: white;
+}
+
+/* Verify Button */
+.verify-btn {
+  width: 100%;
+  padding: 16px 24px;
+  border: none;
+  border-radius: 12px;
+  background: var(--primary);
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.verify-btn:hover:not(:disabled) {
+  background: #22c55e;
+  transform: translateY(-2px);
+  box-shadow: 0 12px 25px rgba(0, 0, 0, 0.2);
+}
+
+.verify-btn:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.verify-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Error Message */
+.error-message {
+  color: var(--error);
+  font-size: 14px;
+  margin-top: 16px;
+  font-weight: 500;
+}
+
+/* Dark Mode Adjustments */
+body.dark .keypad-btn {
+  background: #1e293b;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+body.dark .keypad-btn-delete {
+  background: #374151;
+  color: #f87171;
+}
+
+body.dark .pin-indicator {
+  border-color: #4b5563;
+}
+
+/* Responsive Design */
+@media (max-width: 480px) {
+  .security-container {
+    padding: 32px 24px;
+    margin: 16px;
+  }
+  
+  .keypad-grid {
+    gap: 10px;
+  }
+  
+  .pin-indicators {
+    gap: 16px;
+  }
+  
+  .keypad-btn {
+    font-size: 20px;
+  }
+}

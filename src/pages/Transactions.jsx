@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
-import '../public/css/main.css';
-import '../public/css/dashboard.css';
-import '../public/css/features.css';
+import '../css/main.css';
+import '../css/dashboard.css';
+import '../css/features.css';
 
 // Mock backend data from original app.js
 const MOCK_TRANSACTIONS = [
@@ -54,7 +54,7 @@ const Transactions = () => {
         <div className="card">
           <div className="card-icon">ð</div>
           <h4>Total Income</h4>
-          <p className="amount positive">â{(totalIncome / 100).toFixed(2)}</p>
+          <p className="amount positive"><span className="rupee-symbol">₹</span>{(totalIncome / 100).toFixed(2)}</p>
           <div className="card-trend positive">
             <span>Money received</span>
           </div>
@@ -62,7 +62,7 @@ const Transactions = () => {
         <div className="card">
           <div className="card-icon">ð</div>
           <h4>Total Expenses</h4>
-          <p className="amount negative">â{(totalExpenses / 100).toFixed(2)}</p>
+          <p className="amount negative"><span className="rupee-symbol">₹</span>{(totalExpenses / 100).toFixed(2)}</p>
           <div className="card-trend negative">
             <span>Money spent</span>
           </div>
@@ -71,7 +71,7 @@ const Transactions = () => {
           <div className="card-icon">â</div>
           <h4>Net</h4>
           <p className={`amount ${totalIncome - totalExpenses >= 0 ? 'positive' : 'negative'}`}>
-            â{((totalIncome - totalExpenses) / 100).toFixed(2)}
+            <span className="rupee-symbol">₹</span>{((totalIncome - totalExpenses) / 100).toFixed(2)}
           </p>
           <div className="card-trend">
             <span>Overall balance</span>
@@ -141,7 +141,7 @@ const Transactions = () => {
                   </span>
                 </td>
                 <td className={`amount ${transaction.type === 'credit' ? 'positive' : 'negative'}`}>
-                  {transaction.type === 'credit' ? '+' : '-'}â{(transaction.amount / 100).toFixed(2)}
+                  {transaction.type === 'credit' ? '+' : '-'}<span className="rupee-symbol">₹</span>{(transaction.amount / 100).toFixed(2)}
                 </td>
               </tr>
             ))}

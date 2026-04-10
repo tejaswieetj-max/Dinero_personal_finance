@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
-import '../public/css/main.css';
-import '../public/css/dashboard.css';
-import '../public/css/features.css';
+import '../css/main.css';
+import '../css/dashboard.css';
+import '../css/features.css';
 
 // Mock backend data from original app.js
 const MOCK_SPLITS = [
@@ -70,7 +70,7 @@ const Splits = () => {
         <div className="card">
           <div className="card-icon">ð</div>
           <h4>Total Owed to You</h4>
-          <p className="amount positive">â{(totalOwed / 100).toFixed(2)}</p>
+          <p className="amount positive"><span className="rupee-symbol">₹</span>{(totalOwed / 100).toFixed(2)}</p>
           <div className="card-trend positive">
             <span>Amount to collect</span>
           </div>
@@ -78,7 +78,7 @@ const Splits = () => {
         <div className="card">
           <div className="card-icon">ð</div>
           <h4>Total You Owe</h4>
-          <p className="amount negative">â{(totalYouOwe / 100).toFixed(2)}</p>
+          <p className="amount negative"><span className="rupee-symbol">₹</span>{(totalYouOwe / 100).toFixed(2)}</p>
           <div className="card-trend negative">
             <span>Amount to pay</span>
           </div>
@@ -87,7 +87,7 @@ const Splits = () => {
           <div className="card-icon">â</div>
           <h4>Net Balance</h4>
           <p className={`amount ${totalOwed - totalYouOwe >= 0 ? 'positive' : 'negative'}`}>
-            â{((totalOwed - totalYouOwe) / 100).toFixed(2)}
+            <span className="rupee-symbol">₹</span>{((totalOwed - totalYouOwe) / 100).toFixed(2)}
           </p>
           <div className="card-trend">
             <span>Overall position</span>
@@ -115,7 +115,7 @@ const Splits = () => {
               />
             </div>
             <div>
-              <label>Amount (â)</label>
+              <label>Amount (<span className="rupee-symbol">₹</span>)</label>
               <input
                 className="input"
                 type="number"
@@ -175,7 +175,7 @@ const Splits = () => {
               <tr key={split.id}>
                 <td>{split.person}</td>
                 <td>{split.note}</td>
-                <td className="amount">â{(split.amount / 100).toFixed(2)}</td>
+                <td className="amount"><span className="rupee-symbol">₹</span>{(split.amount / 100).toFixed(2)}</td>
                 <td>
                   <span className={`badge ${split.isOwed ? 'paid' : 'overdue'}`}>
                     {split.isOwed ? 'Owed to You' : 'You Owe'}

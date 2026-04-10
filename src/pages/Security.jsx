@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import '../public/css/main.css';
-import '../public/css/security.css';
+import '../css/main.css';
+import '../css/security.css';
 
 const Security = () => {
   const [enteredPin, setEnteredPin] = useState('');
@@ -49,28 +49,56 @@ const Security = () => {
   };
 
   return (
-    <div className="pin-wrapper">
-      <div className="pin-container">
-        <h2>Enter PIN</h2>
-        <div className="dots-container">
-          {updateDots()}
+    <div className="security-wrapper">
+      <div className="security-container">
+        <h2 className="security-title">Enter PIN</h2>
+        
+        {/* PIN Indicators */}
+        <div className="pin-indicators">
+          {[0, 1, 2, 3].map((index) => (
+            <div 
+              key={index}
+              className={`pin-indicator ${index < enteredPin.length ? 'filled' : ''}`}
+            />
+          ))}
         </div>
-        <div className="keypad">
-          <button onClick={() => pressKey(1)}>1</button>
-          <button onClick={() => pressKey(2)}>2</button>
-          <button onClick={() => pressKey(3)}>3</button>
-          <button onClick={() => pressKey(4)}>4</button>
-          <button onClick={() => pressKey(5)}>5</button>
-          <button onClick={() => pressKey(6)}>6</button>
-          <button onClick={() => pressKey(7)}>7</button>
-          <button onClick={() => pressKey(8)}>8</button>
-          <button onClick={() => pressKey(9)}>9</button>
-          <div></div>
-          <button onClick={() => pressKey(0)}>0</button>
-          <button onClick={deleteKey}>â</button>
+
+        {/* Keypad */}
+        <div className="keypad-grid">
+          {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((num) => (
+            <button 
+              key={num}
+              className="keypad-btn"
+              onClick={() => pressKey(num)}
+            >
+              {num}
+            </button>
+          ))}
+          <button 
+            className="keypad-btn keypad-btn-delete"
+            onClick={deleteKey}
+          >
+            ⌫
+          </button>
+          <button 
+            className="keypad-btn"
+            onClick={() => pressKey(0)}
+          >
+            0
+          </button>
         </div>
-        <button className="verify-btn" onClick={verifyPin}>Verify</button>
-        {error && <p className="error">{error}</p>}
+
+        {/* Verify Button */}
+        <button 
+          className="verify-btn"
+          onClick={verifyPin}
+          disabled={enteredPin.length !== 4}
+        >
+          Verify
+        </button>
+
+        {/* Error Message */}
+        {error && <p className="error-message">{error}</p>}
       </div>
     </div>
   );

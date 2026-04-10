@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
-import '../public/css/main.css';
-import '../public/css/profiles.css';
+import '../css/main.css';
+import '../css/profiles.css';
 
 const DEFAULT_PROFILES = [
   { name: "Zeph", avatar: "assets/avatars/avatar1.png" },

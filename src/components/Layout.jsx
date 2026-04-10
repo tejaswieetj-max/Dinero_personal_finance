@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
-import '../public/css/main.css';
-import '../public/css/dashboard.css';
+import '../css/main.css';
+import '../css/dashboard.css';
 
 const Layout = ({ children }) => {
   const { user, totalBalance } = useApp();
@@ -44,10 +44,10 @@ const Layout = ({ children }) => {
           <div className="page-header">
             <div className="page-title">
               <h1>Hi, {user?.name || 'User'}</h1>
-              <p>Net Worth: <span className="amount positive">â{ (totalBalance / 100).toFixed(2) }</span></p>
+              <p>Net Worth: <span className="amount positive"><span className="rupee-symbol">₹</span>{ (totalBalance / 100).toFixed(2) }</span></p>
             </div>
             <div className="header-actions">
-              <button className="theme-toggle" onClick={toggleTheme}>ð</button>
+              <button className="theme-toggle" onClick={toggleTheme}>🌙</button>
             </div>
           </div>
         </header>
