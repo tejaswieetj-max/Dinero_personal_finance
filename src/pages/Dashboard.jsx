@@ -1,5 +1,7 @@
 import React from 'react';
 import { useApp } from '../context/AppContext';
+import '../public/css/main.css';
+import '../public/css/dashboard.css';
 
 // Mock backend data from original app.js
 const MOCK_TRANSACTIONS = [

@@ -1,6 +1,8 @@
 import React, { useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
+import '../public/css/main.css';
+import '../public/css/dashboard.css';
 
 const Layout = ({ children }) => {
   const { user, totalBalance } = useApp();

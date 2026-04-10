@@ -1,5 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import '../public/css/main.css';
+import '../public/css/auth-method.css';
 
 const AuthMethod = () => {
   return (

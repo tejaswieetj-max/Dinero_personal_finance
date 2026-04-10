@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import '../public/css/main.css';
+import '../public/css/security.css';
 
 const Security = () => {
   const [enteredPin, setEnteredPin] = useState('');

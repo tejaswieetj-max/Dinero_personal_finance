@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
+import '../public/css/main.css';
+import '../public/css/dashboard.css';
+import '../public/css/features.css';
 
 // Mock backend data from original app.js
 const MOCK_TRANSACTIONS = [

@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import '../public/css/main.css';
+import '../public/css/face-id.css';
 
 const FaceID = () => {
   const [isScanning, setIsScanning] = useState(true);

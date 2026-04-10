@@ -5,3 +5,17 @@
 @import '../public/css/features.css';
 @import '../public/css/profiles.css';
 @import '../public/css/auth.css';
+@import '../public/css/auth-method.css';
+@import '../public/css/face-id.css';
+@import '../public/css/security.css';
+
+/* Ensure CSS is loaded - test styles */
+body {
+  font-family: system-ui, -apple-system, sans-serif !important;
+}
+
+/* Test if styles are applying */
+.test-css-load {
+  background: red !important;
+  color: white !important;
+}
