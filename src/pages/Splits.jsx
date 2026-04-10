@@ -3,11 +3,11 @@ import { useApp } from '../context/AppContext';
 
 // Mock backend data from original app.js
 const MOCK_SPLITS = [
-  { id: "split-1", person: "Alex", note: "Dinner at Italian Restaurant", amount: 3500, isOwed: false },
-  { id: "split-2", person: "Sarah", note: "Movie tickets and snacks", amount: 1800, isOwed: true },
-  { id: "split-3", person: "Mike", note: "Uber ride to airport", amount: 2500, isOwed: false },
-  { id: "split-4", person: "Emma", note: "Coffee shop meetup", amount: 850, isOwed: true },
-  { id: "split-5", person: "John", note: "Shared groceries", amount: 4200, isOwed: false }
+  { id: "split-1", person: "Tejas", note: "Dinner at Italian Restaurant", amount: 3500, isOwed: false },
+  { id: "split-2", person: "Zeph", note: "Movie tickets and snacks", amount: 1800, isOwed: true },
+  { id: "split-3", person: "Abir", note: "Uber ride to airport", amount: 2500, isOwed: false },
+  { id: "split-4", person: "Divya", note: "Coffee shop meetup", amount: 850, isOwed: true },
+  { id: "split-5", person: "Mrini", note: "Shared groceries", amount: 4200, isOwed: false }
 ];
 
 const Splits = () => {
