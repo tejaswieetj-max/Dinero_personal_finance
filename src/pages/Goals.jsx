@@ -13,7 +13,7 @@ const MOCK_GOALS = [
 ];
 
 const Goals = () => {
-  const { goals, updateGoalProgress, totalBalance } = useApp();
+  const { goals, updateGoalProgress, totalBalance, setState } = useApp();
   
   // Use mock goals if no goals in state
   const displayGoals = goals.length > 0 ? goals : MOCK_GOALS;
@@ -35,8 +35,19 @@ const Goals = () => {
       return;
     }
 
-    // This would add a new goal to the state
-    // For now, we'll just close the form
+    const goalToAdd = {
+      id: `goal-${Date.now()}`,
+      title: newGoal.title,
+      target: parseFloat(newGoal.target) * 100, // Convert to cents
+      current: parseFloat(newGoal.current || '0') * 100,
+      deadline: newGoal.deadline
+    };
+
+    setState(prevState => ({
+      ...prevState,
+      goals: [...prevState.goals, goalToAdd]
+    }));
+
     setShowAddForm(false);
     setNewGoal({ title: '', target: '', current: '', deadline: '' });
   };
@@ -133,7 +144,7 @@ const Goals = () => {
           
           return (
             <div key={goal.id} className="card">
-              <div className="card-icon">ð</div>
+              <div className="card-icon">🎯</div>
               <h3>{goal.title}</h3>
               <p className="amount positive"><span className="rupee-symbol">₹</span>{(goal.current / 100).toFixed(2)} / <span className="rupee-symbol">₹</span>{(goal.target / 100).toFixed(2)}</p>
               <div className="card-trend positive">
@@ -147,7 +158,7 @@ const Goals = () => {
                   disabled={progress >= 100}
                   style={{ width: '100%' }}
                 >
-                  {progress >= 100 ? 'Completed! ð' : 'Fund Goal'}
+                  {progress >= 100 ? 'Completed! ✅' : 'Fund Goal'}
                 </button>
               </div>
             </div>

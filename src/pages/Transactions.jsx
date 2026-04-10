@@ -52,7 +52,7 @@ const Transactions = () => {
 
       <div className="row">
         <div className="card">
-          <div className="card-icon">ð</div>
+          <div className="card-icon">💰</div>
           <h4>Total Income</h4>
           <p className="amount positive"><span className="rupee-symbol">₹</span>{(totalIncome / 100).toFixed(2)}</p>
           <div className="card-trend positive">
@@ -60,7 +60,7 @@ const Transactions = () => {
           </div>
         </div>
         <div className="card">
-          <div className="card-icon">ð</div>
+          <div className="card-icon">💰</div>
           <h4>Total Expenses</h4>
           <p className="amount negative"><span className="rupee-symbol">₹</span>{(totalExpenses / 100).toFixed(2)}</p>
           <div className="card-trend negative">
@@ -68,7 +68,7 @@ const Transactions = () => {
           </div>
         </div>
         <div className="card">
-          <div className="card-icon">â</div>
+          <div className="card-icon">📊</div>
           <h4>Net</h4>
           <p className={`amount ${totalIncome - totalExpenses >= 0 ? 'positive' : 'negative'}`}>
             <span className="rupee-symbol">₹</span>{((totalIncome - totalExpenses) / 100).toFixed(2)}

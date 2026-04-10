@@ -27,20 +27,7 @@ const Bills = () => {
 
   const handlePayBill = (billId) => {
     if (window.confirm('Are you sure you want to pay this bill?')) {
-      const bill = displayBills.find(b => b.id === billId);
-      if (bill) {
-        // Mark bill as paid
-        payBill(billId);
-        // Create transaction entry
-        addTransaction({
-          id: `tx-bill-${Date.now()}`,
-          date: new Date().toISOString().split('T')[0],
-          desc: bill.name,
-          category: 'Bills',
-          amount: bill.amount,
-          type: 'debit'
-        });
-      }
+      payBill(billId);
     }
   };
 
@@ -63,12 +50,17 @@ const Bills = () => {
     setShowAddForm(false);
   };
 
-  const getStatusBadge = (status) => {
-    return status === 'paid' ? 'badge paid' : 'badge unpaid';
-  };
-
-  const getStatusText = (status) => {
-    return status === 'paid' ? 'Paid' : 'Unpaid';
+  const getBillStatus = (bill) => {
+    const today = new Date();
+    const dueDate = new Date(bill.due);
+    
+    if (bill.status === 'paid') {
+      return { status: 'paid', text: 'Paid', class: 'badge-paid' };
+    } else if (dueDate < today) {
+      return { status: 'pending', text: 'Pending', class: 'badge-pending' };
+    } else {
+      return { status: 'upcoming', text: 'Upcoming', class: 'badge-upcoming' };
+    }
   };
 
   const unpaidBills = displayBills.filter(bill => bill.status === 'unpaid');
@@ -181,8 +173,8 @@ const Bills = () => {
                 <td>{bill.due}</td>
                 <td className="amount"><span className="rupee-symbol">₹</span>{(bill.amount / 100).toFixed(2)}</td>
                 <td>
-                  <span className={`badge ${bill.status === 'paid' ? 'paid' : 'overdue'}`}>
-                    {getStatusText(bill.status)}
+                  <span className={`badge ${getBillStatus(bill).class}`}>
+                    {getBillStatus(bill).text}
                   </span>
                 </td>
                 <td>

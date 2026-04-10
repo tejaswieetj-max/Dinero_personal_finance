@@ -156,6 +156,25 @@ export const AppProvider = ({ children }) => {
     }));
   };
 
+  // Bill management
+  const addBill = (bill) => {
+    setState(prevState => ({
+      ...prevState,
+      bills: [...prevState.bills, { ...bill, id: `bill-${Date.now()}` }]
+    }));
+  };
+
+  // Transaction management
+  const addTransaction = (transaction) => {
+    setState(prevState => ({
+      ...prevState,
+      totalBalance: transaction.type === 'credit' 
+        ? prevState.totalBalance + transaction.amount
+        : prevState.totalBalance - transaction.amount,
+      transactions: [transaction, ...prevState.transactions]
+    }));
+  };
+
   // Split management
   const addSplit = (split) => {
     setState(prevState => ({
@@ -172,6 +191,8 @@ export const AppProvider = ({ children }) => {
   const value = {
     ...state,
     payBill,
+    addBill,
+    addTransaction,
     updateGoalProgress,
     addSplit,
     setUser,

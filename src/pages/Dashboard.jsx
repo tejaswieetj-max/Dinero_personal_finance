@@ -36,21 +36,21 @@ const Dashboard = () => {
   });
   const totalRemainingBills = currentMonthBills.reduce((sum, bill) => sum + bill.amount, 0);
 
-  // Calculate remaining goals for current month
-  const currentMonthGoals = goals.filter(goal => {
-    const goalDate = new Date(goal.deadline);
-    return goalDate.getMonth() === currentMonth && 
-           goalDate.getFullYear() === currentYear &&
-           goal.current < goal.target;
-  });
-  const totalRemainingGoals = currentMonthGoals.reduce((sum, goal) => sum + (goal.target - goal.current), 0);
+  // Calculate monthly contribution needed for active goals
+  const activeGoals = goals.filter(goal => goal.current < goal.target);
+  const totalMonthlyGoalContribution = activeGoals.reduce((sum, goal) => {
+    const monthsRemaining = Math.max(1, 
+      Math.ceil((new Date(goal.deadline).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24 * 30))
+    );
+    const remainingAmount = goal.target - goal.current;
+    return sum + (remainingAmount / monthsRemaining);
+  }, 0);
 
   // Calculate financial health
-  const totalAvailable = monthlyIncome + totalBalance;
-  const totalObligations = totalRemainingBills + totalRemainingGoals;
-  const financialHealth = totalAvailable - totalObligations;
-
-  const isMonthCovered = financialHealth >= 0;
+  const currentLiquid = totalBalance + monthlyIncome;
+  const totalObligations = totalRemainingBills + totalMonthlyGoalContribution;
+  const financialHealth = currentLiquid - totalObligations;
+  const isSafeToSpend = financialHealth > 0;
 
   return (
     <div className="dashboard-content">
@@ -76,7 +76,7 @@ const Dashboard = () => {
       {/* Quick Stats */}
       <div className="cards">
         <div className="card">
-          <div className="card-icon">ð</div>
+          <div className="card-icon">💰</div>
           <h3>Monthly Income</h3>
           <p className="amount positive"><span className="rupee-symbol">₹</span>15,000.00</p>
           <div className="card-trend positive">
@@ -84,7 +84,7 @@ const Dashboard = () => {
           </div>
         </div>
         <div className="card">
-          <div className="card-icon">ð</div>
+          <div className="card-icon">💰</div>
           <h3>Monthly Expenses</h3>
           <p className="amount negative"><span className="rupee-symbol">₹</span>8,500.00</p>
           <div className="card-trend negative">
@@ -92,7 +92,7 @@ const Dashboard = () => {
           </div>
         </div>
         <div className="card">
-          <div className="card-icon">ð</div>
+          <div className="card-icon">💰</div>
           <h3>Savings Rate</h3>
           <p className="amount positive">43.3%</p>
           <div className="card-trend positive">
@@ -101,30 +101,32 @@ const Dashboard = () => {
         </div>
       </div>
 
-      {/* Monthly Financial Health Card */}
+      {/* Monthly Health Analysis Card */}
       <div className="card" style={{
-        background: isMonthCovered ? 
+        background: isSafeToSpend ? 
           'linear-gradient(135deg, #065f46, #047857)' : 
           'linear-gradient(135deg, #7f1d1d, #991b1b)',
         color: 'white',
         border: 'none'
       }}>
-        <div className="card-icon">💰</div>
-        <h3>Monthly Financial Health</h3>
+        <div className="card-icon">ð</div>
+        <h3>Monthly Health Analysis</h3>
         <div style={{ margin: '16px 0' }}>
-          {isMonthCovered ? (
+          {isSafeToSpend ? (
             <div style={{ color: '#4ade80', fontSize: '1.2rem', fontWeight: '700' }}>
-              Your month is covered!
+              Safe to Spend
             </div>
           ) : (
             <div style={{ color: '#f87171', fontSize: '1.2rem', fontWeight: '700' }}>
-              You are short <span className="rupee-symbol">₹</span>
-              {Math.abs(financialHealth / 100).toFixed(2)} this month!
+              Budget Overrun Risk
+              <br />
+              Short <span className="rupee-symbol">₹</span>
+              {Math.abs(financialHealth / 100).toFixed(2)}
             </div>
           )}
         </div>
         <div style={{ fontSize: '0.9rem', opacity: '0.8' }}>
-          Available: <span className="rupee-symbol">₹</span>{(totalAvailable / 100).toFixed(2)} | 
+          Current Liquid: <span className="rupee-symbol">₹</span>{(currentLiquid / 100).toFixed(2)} | 
           Obligations: <span className="rupee-symbol">₹</span>{(totalObligations / 100).toFixed(2)}
         </div>
       </div>

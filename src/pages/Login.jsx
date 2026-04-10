@@ -11,6 +11,10 @@ const Login = () => {
   const { setUser } = useApp();
   const navigate = useNavigate();
 
+  const toggleTheme = () => {
+    document.body.classList.toggle('dark');
+  };
+
   const MOCK_USERS = [
     { email: "admin@dinero.com", password: "password123", id: "admin", name: "Admin" },
     { email: "tejas@gmail.com", password: "1234", id: "tejas", name: "Tejas" }
@@ -37,6 +41,9 @@ const Login = () => {
   return (
     <div className="welcome-wrapper">
       <div className="welcome-left">
+        <button className="theme-toggle-login" onClick={toggleTheme}>
+          <span className="theme-icon">ð</span>
+        </button>
         <h1>Welcome to <span>Dinero</span></h1>
         <p>
           Your personal banking assistant that helps you keep track of

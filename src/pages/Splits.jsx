@@ -68,7 +68,7 @@ const Splits = () => {
       {/* Summary Cards */}
       <div className="row">
         <div className="card">
-          <div className="card-icon">ð</div>
+          <div className="card-icon">💰</div>
           <h4>Total Owed to You</h4>
           <p className="amount positive"><span className="rupee-symbol">₹</span>{(totalOwed / 100).toFixed(2)}</p>
           <div className="card-trend positive">
@@ -76,7 +76,7 @@ const Splits = () => {
           </div>
         </div>
         <div className="card">
-          <div className="card-icon">ð</div>
+          <div className="card-icon">💰</div>
           <h4>Total You Owe</h4>
           <p className="amount negative"><span className="rupee-symbol">₹</span>{(totalYouOwe / 100).toFixed(2)}</p>
           <div className="card-trend negative">
@@ -84,7 +84,7 @@ const Splits = () => {
           </div>
         </div>
         <div className="card">
-          <div className="card-icon">â</div>
+          <div className="card-icon">⚖️</div>
           <h4>Net Balance</h4>
           <p className={`amount ${totalOwed - totalYouOwe >= 0 ? 'positive' : 'negative'}`}>
             <span className="rupee-symbol">₹</span>{((totalOwed - totalYouOwe) / 100).toFixed(2)}
@@ -137,14 +137,21 @@ const Splits = () => {
             />
           </div>
           <div style={{ margin: '16px 0' }}>
-            <label>
-              <input
-                type="checkbox"
-                checked={newSplit.isOwed}
-                onChange={(e) => setNewSplit({...newSplit, isOwed: e.target.checked})}
-              />
-              They owe you (uncheck if you owe them)
-            </label>
+            <label style={{ display: 'block', marginBottom: '8px' }}>Who owes who?</label>
+            <div className="toggle-container">
+              <button 
+                className={`toggle-option ${!newSplit.isOwed ? 'active' : ''}`}
+                onClick={() => setNewSplit({...newSplit, isOwed: false})}
+              >
+                I Owe Someone
+              </button>
+              <button 
+                className={`toggle-option ${newSplit.isOwed ? 'active' : ''}`}
+                onClick={() => setNewSplit({...newSplit, isOwed: true})}
+              >
+                Someone Owes Me
+              </button>
+            </div>
           </div>
           <div className="row">
             <button onClick={handleAddSplit} className="btn">Add Split</button>
