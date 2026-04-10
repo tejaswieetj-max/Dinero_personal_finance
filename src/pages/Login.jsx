@@ -17,7 +17,7 @@ const Login = () => {
 
   const MOCK_USERS = [
     { email: "admin@dinero.com", password: "password123", id: "admin", name: "Admin" },
-    { email: "tejas@gmail.com", password: "1234", id: "tejas", name: "Tejas" }
+    { email: "tejas@gmail.com", password: "1234", id: "tejas", name: "Tejaswi" }
   ];
 
   const handleSubmit = (e) => {
@@ -50,7 +50,7 @@ const Login = () => {
           your financial responsibilities.
         </p>
         <p style={{ marginTop: "8px", fontSize: "13px", color: "var(--text-muted)" }}>
-          <h4>Done by - <strong>Tejas</strong></h4>
+          <h4>Done by - <strong>Tejaswi</strong></h4>
           <h4><b>24BE5518</b></h4>
         </p>
         <ul className="features">
