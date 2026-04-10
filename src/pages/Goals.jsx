@@ -1,8 +1,19 @@
 import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
 
+// Mock backend data from original app.js
+const MOCK_GOALS = [
+  { id: "goal-1", title: "Emergency Fund", target: 1000000, current: 250000, deadline: "2026-12-31" },
+  { id: "goal-2", title: "Vacation Fund", target: 500000, current: 100000, deadline: "2026-08-15" },
+  { id: "goal-3", title: "New Laptop", target: 150000, current: 75000, deadline: "2026-06-30" },
+  { id: "goal-4", title: "Home Renovation", target: 2000000, current: 500000, deadline: "2027-03-31" }
+];
+
 const Goals = () => {
   const { goals, updateGoalProgress, totalBalance } = useApp();
+  
+  // Use mock goals if no goals in state
+  const displayGoals = goals.length > 0 ? goals : MOCK_GOALS;
   const [showAddForm, setShowAddForm] = useState(false);
   const [newGoal, setNewGoal] = useState({
     title: '',
@@ -97,7 +108,7 @@ const Goals = () => {
       )}
 
       <div className="goals-grid">
-        {goals.map((goal) => {
+        {displayGoals.map((goal) => {
           const progress = calculateProgress(goal.current, goal.target);
           const remaining = goal.target - goal.current;
           
@@ -149,7 +160,7 @@ const Goals = () => {
         })}
       </div>
 
-      {goals.length === 0 && (
+      {displayGoals.length === 0 && (
         <div className="no-goals">
           <h3>No goals yet</h3>
           <p>Start by creating your first savings goal!</p>

@@ -1,8 +1,20 @@
 import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
 
+// Mock backend data from original app.js
+const MOCK_SPLITS = [
+  { id: "split-1", person: "Alex", note: "Dinner at Italian Restaurant", amount: 3500, isOwed: false },
+  { id: "split-2", person: "Sarah", note: "Movie tickets and snacks", amount: 1800, isOwed: true },
+  { id: "split-3", person: "Mike", note: "Uber ride to airport", amount: 2500, isOwed: false },
+  { id: "split-4", person: "Emma", note: "Coffee shop meetup", amount: 850, isOwed: true },
+  { id: "split-5", person: "John", note: "Shared groceries", amount: 4200, isOwed: false }
+];
+
 const Splits = () => {
   const { splits, addSplit } = useApp();
+  
+  // Use mock splits if no splits in state
+  const displaySplits = splits.length > 0 ? splits : MOCK_SPLITS;
   const [showAddForm, setShowAddForm] = useState(false);
   const [newSplit, setNewSplit] = useState({
     person: '',
@@ -11,11 +23,11 @@ const Splits = () => {
     isOwed: false
   });
 
-  const totalOwed = splits
+  const totalOwed = displaySplits
     .filter(split => split.isOwed)
     .reduce((sum, split) => sum + split.amount, 0);
   
-  const totalYouOwe = splits
+  const totalYouOwe = displaySplits
     .filter(split => !split.isOwed)
     .reduce((sum, split) => sum + split.amount, 0);
 
@@ -124,7 +136,7 @@ const Splits = () => {
             </tr>
           </thead>
           <tbody>
-            {splits.map((split) => (
+            {displaySplits.map((split) => (
               <tr key={split.id}>
                 <td>{split.person}</td>
                 <td>{split.note}</td>
@@ -143,7 +155,7 @@ const Splits = () => {
         </table>
       </div>
 
-      {splits.length === 0 && (
+      {displaySplits.length === 0 && (
         <div className="no-splits">
           <h3>No splits yet</h3>
           <p>Start tracking shared expenses with friends!</p>

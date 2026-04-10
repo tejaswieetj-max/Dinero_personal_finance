@@ -1,8 +1,20 @@
 import React from 'react';
 import { useApp } from '../context/AppContext';
 
+// Mock backend data from original app.js
+const MOCK_BILLS = [
+  { id: "bill-1", name: "Electricity • City Power", due: "2026-04-14", amount: 12840, status: "unpaid" },
+  { id: "bill-2", name: "Internet • FiberNet", due: "2026-04-16", amount: 7999, status: "unpaid" },
+  { id: "bill-3", name: "Credit Card • NeoBank", due: "2026-04-20", amount: 20386, status: "unpaid" },
+  { id: "bill-4", name: "Streaming • DineroFlix", due: "2026-04-02", amount: 1299, status: "paid" },
+  { id: "bill-5", name: "Phone • MobileCo", due: "2026-03-29", amount: 8701, status: "unpaid" }
+];
+
 const Bills = () => {
   const { bills, payBill } = useApp();
+  
+  // Use mock bills if no bills in state
+  const displayBills = bills.length > 0 ? bills : MOCK_BILLS;
 
   const handlePayBill = (billId) => {
     if (window.confirm('Are you sure you want to pay this bill?')) {
@@ -18,8 +30,8 @@ const Bills = () => {
     return status === 'paid' ? 'Paid' : 'Unpaid';
   };
 
-  const unpaidBills = bills.filter(bill => bill.status === 'unpaid');
-  const paidBills = bills.filter(bill => bill.status === 'paid');
+  const unpaidBills = displayBills.filter(bill => bill.status === 'unpaid');
+  const paidBills = displayBills.filter(bill => bill.status === 'paid');
   const totalDue = unpaidBills.reduce((sum, bill) => sum + bill.amount, 0);
 
   return (
@@ -54,7 +66,7 @@ const Bills = () => {
             </tr>
           </thead>
           <tbody>
-            {bills.map((bill) => (
+            {displayBills.map((bill) => (
               <tr key={bill.id}>
                 <td>{bill.name}</td>
                 <td>{bill.due}</td>

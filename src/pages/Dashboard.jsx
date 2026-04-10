@@ -1,17 +1,20 @@
 import React from 'react';
 import { useApp } from '../context/AppContext';
 
+// Mock backend data from original app.js
+const MOCK_TRANSACTIONS = [
+  { id: "trans-1", date: "2026-04-10", desc: "Initial Deposit", category: "Income", amount: 2456200, type: "credit" },
+  { id: "trans-2", date: "2026-04-09", desc: "Salary Credit", category: "Income", amount: 1500000, type: "credit" },
+  { id: "trans-3", date: "2026-04-08", desc: "Grocery Shopping", category: "Food", amount: 3500, type: "debit" },
+  { id: "trans-4", date: "2026-04-07", desc: "Electric Bill Payment", category: "Bills", amount: 12840, type: "debit" },
+  { id: "trans-5", date: "2026-04-06", desc: "Restaurant", category: "Food", amount: 2500, type: "debit" }
+];
+
 const Dashboard = () => {
   const { transactions, totalBalance } = useApp();
 
   // Display transactions (show mock entries if empty)
-  const displayTransactions = transactions.length > 0 ? transactions : [
-    { id: 'mock-1', date: '2026-04-10', desc: 'Initial Deposit', category: 'Income', amount: 2456200, type: 'credit' },
-    { id: 'mock-2', date: '2026-04-09', desc: 'Salary Credit', category: 'Income', amount: 1500000, type: 'credit' },
-    { id: 'mock-3', date: '2026-04-08', desc: 'Grocery Shopping', category: 'Food', amount: 3500, type: 'debit' },
-    { id: 'mock-4', date: '2026-04-07', desc: 'Electric Bill', category: 'Bills', amount: 12840, type: 'debit' },
-    { id: 'mock-5', date: '2026-04-06', desc: 'Restaurant', category: 'Food', amount: 2500, type: 'debit' },
-  ];
+  const displayTransactions = transactions.length > 0 ? transactions : MOCK_TRANSACTIONS;
 
   return (
     <div className="dashboard-content">
