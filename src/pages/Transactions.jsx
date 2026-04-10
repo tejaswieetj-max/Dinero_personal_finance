@@ -40,53 +40,83 @@ const Transactions = () => {
 
   return (
     <div className="transactions-content">
-      <div className="transactions-header">
-        <h2>Transactions</h2>
-        <div className="transactions-summary">
-          <div className="summary-card income">
-            <h4>Total Income</h4>
-            <span className="amount positive">¥{(totalIncome / 100).toFixed(2)}</span>
+      <div className="page-header">
+        <div className="page-title">
+          <h2>Transactions</h2>
+          <p>View your complete transaction history</p>
+        </div>
+      </div>
+
+      <div className="row">
+        <div className="card">
+          <div className="card-icon">ð</div>
+          <h4>Total Income</h4>
+          <p className="amount positive">â{(totalIncome / 100).toFixed(2)}</p>
+          <div className="card-trend positive">
+            <span>Money received</span>
           </div>
-          <div className="summary-card expenses">
-            <h4>Total Expenses</h4>
-            <span className="amount negative">¥{(totalExpenses / 100).toFixed(2)}</span>
+        </div>
+        <div className="card">
+          <div className="card-icon">ð</div>
+          <h4>Total Expenses</h4>
+          <p className="amount negative">â{(totalExpenses / 100).toFixed(2)}</p>
+          <div className="card-trend negative">
+            <span>Money spent</span>
           </div>
-          <div className="summary-card net">
-            <h4>Net</h4>
-            <span className={`amount ${totalIncome - totalExpenses >= 0 ? 'positive' : 'negative'}`}>
-              ¥{((totalIncome - totalExpenses) / 100).toFixed(2)}
-            </span>
+        </div>
+        <div className="card">
+          <div className="card-icon">â</div>
+          <h4>Net</h4>
+          <p className={`amount ${totalIncome - totalExpenses >= 0 ? 'positive' : 'negative'}`}>
+            â{((totalIncome - totalExpenses) / 100).toFixed(2)}
+          </p>
+          <div className="card-trend">
+            <span>Overall balance</span>
           </div>
         </div>
       </div>
 
       {/* Filters */}
-      <div className="transactions-filters">
-        <div className="filter-group">
-          <input
-            type="text"
-            placeholder="Search transactions..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="search-input"
-          />
+      <div className="panel">
+        <div className="page-header">
+          <div className="page-title">
+            <h3>Filter Transactions</h3>
+            <p>Search and filter your transaction history</p>
+          </div>
         </div>
-        <div className="filter-group">
-          <select 
-            value={filter} 
-            onChange={(e) => setFilter(e.target.value)}
-            className="filter-select"
-          >
-            <option value="all">All Transactions</option>
-            <option value="credit">Income</option>
-            <option value="debit">Expenses</option>
-          </select>
+        <div className="row">
+          <div style={{ flex: 2 }}>
+            <input
+              className="input"
+              type="text"
+              placeholder="Search transactions..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
+          <div>
+            <select 
+              className="input"
+              value={filter} 
+              onChange={(e) => setFilter(e.target.value)}
+            >
+              <option value="all">All Transactions</option>
+              <option value="credit">Income</option>
+              <option value="debit">Expenses</option>
+            </select>
+          </div>
         </div>
       </div>
 
       {/* Transactions Table */}
-      <div className="transactions-table">
-        <table>
+      <div className="panel">
+        <div className="page-header">
+          <div className="page-title">
+            <h3>Transaction History</h3>
+            <p>{filteredTransactions.length} transactions found</p>
+          </div>
+        </div>
+        <table className="table">
           <thead>
             <tr>
               <th>Date</th>
@@ -103,12 +133,12 @@ const Transactions = () => {
                 <td>{transaction.desc}</td>
                 <td>{transaction.category}</td>
                 <td>
-                  <span className={`transaction-type ${transaction.type}`}>
+                  <span className={`badge ${transaction.type === 'credit' ? 'paid' : 'overdue'}`}>
                     {transaction.type === 'credit' ? 'Income' : 'Expense'}
                   </span>
                 </td>
-                <td className={transaction.type === 'credit' ? 'credit' : 'debit'}>
-                  {transaction.type === 'credit' ? '+' : '-'}¥{(transaction.amount / 100).toFixed(2)}
+                <td className={`amount ${transaction.type === 'credit' ? 'positive' : 'negative'}`}>
+                  {transaction.type === 'credit' ? '+' : '-'}â{(transaction.amount / 100).toFixed(2)}
                 </td>
               </tr>
             ))}
@@ -117,16 +147,20 @@ const Transactions = () => {
       </div>
 
       {filteredTransactions.length === 0 && (
-        <div className="no-transactions">
-          <h3>No transactions found</h3>
-          <p>Try adjusting your filters or search terms.</p>
+        <div className="panel">
+          <div style={{ textAlign: 'center', padding: '40px' }}>
+            <h3>No transactions found</h3>
+            <p>Try adjusting your filters or search terms.</p>
+          </div>
         </div>
       )}
 
       {displayTransactions.length === 0 && (
-        <div className="no-transactions">
-          <h3>No transactions yet</h3>
-          <p>Your transaction history will appear here once you start using the app.</p>
+        <div className="panel">
+          <div style={{ textAlign: 'center', padding: '40px' }}>
+            <h3>No transactions yet</h3>
+            <p>Your transaction history will appear here once you start using the app.</p>
+          </div>
         </div>
       )}
     </div>

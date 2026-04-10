@@ -49,10 +49,13 @@ const Splits = () => {
 
   return (
     <div className="splits-content">
-      <div className="splits-header">
-        <h2>Split Tracker</h2>
+      <div className="page-header">
+        <div className="page-title">
+          <h2>Split Tracker</h2>
+          <p>Manage shared expenses and debt tracking</p>
+        </div>
         <button 
-          className="add-split-btn"
+          className="btn"
           onClick={() => setShowAddForm(true)}
         >
           + Add Split
@@ -60,54 +63,77 @@ const Splits = () => {
       </div>
 
       {/* Summary Cards */}
-      <div className="splits-summary">
-        <div className="summary-card owed">
+      <div className="row">
+        <div className="card">
+          <div className="card-icon">ð</div>
           <h4>Total Owed to You</h4>
-          <span className="amount positive">¥{(totalOwed / 100).toFixed(2)}</span>
+          <p className="amount positive">â{(totalOwed / 100).toFixed(2)}</p>
+          <div className="card-trend positive">
+            <span>Amount to collect</span>
+          </div>
         </div>
-        <div className="summary-card you-owe">
+        <div className="card">
+          <div className="card-icon">ð</div>
           <h4>Total You Owe</h4>
-          <span className="amount negative">¥{(totalYouOwe / 100).toFixed(2)}</span>
+          <p className="amount negative">â{(totalYouOwe / 100).toFixed(2)}</p>
+          <div className="card-trend negative">
+            <span>Amount to pay</span>
+          </div>
         </div>
-        <div className="summary-card net">
+        <div className="card">
+          <div className="card-icon">â</div>
           <h4>Net Balance</h4>
-          <span className={`amount ${totalOwed - totalYouOwe >= 0 ? 'positive' : 'negative'}`}>
-            ¥{((totalOwed - totalYouOwe) / 100).toFixed(2)}
-          </span>
+          <p className={`amount ${totalOwed - totalYouOwe >= 0 ? 'positive' : 'negative'}`}>
+            â{((totalOwed - totalYouOwe) / 100).toFixed(2)}
+          </p>
+          <div className="card-trend">
+            <span>Overall position</span>
+          </div>
         </div>
       </div>
 
       {showAddForm && (
-        <div className="add-split-form">
-          <h3>Add New Split</h3>
-          <div className="form-group">
-            <label>Person</label>
-            <input
-              type="text"
-              value={newSplit.person}
-              onChange={(e) => setNewSplit({...newSplit, person: e.target.value})}
-              placeholder="e.g., Alex"
-            />
+        <div className="panel">
+          <div className="page-header">
+            <div className="page-title">
+              <h3>Add New Split</h3>
+              <p>Record a shared expense</p>
+            </div>
           </div>
-          <div className="form-group">
+          <div className="row">
+            <div>
+              <label>Person</label>
+              <input
+                className="input"
+                type="text"
+                value={newSplit.person}
+                onChange={(e) => setNewSplit({...newSplit, person: e.target.value})}
+                placeholder="e.g., Tejas"
+              />
+            </div>
+            <div>
+              <label>Amount (â)</label>
+              <input
+                className="input"
+                type="number"
+                value={newSplit.amount}
+                onChange={(e) => setNewSplit({...newSplit, amount: e.target.value})}
+                placeholder="35.00"
+              />
+            </div>
+          </div>
+          <div>
             <label>Note</label>
             <input
+              className="input"
               type="text"
               value={newSplit.note}
               onChange={(e) => setNewSplit({...newSplit, note: e.target.value})}
               placeholder="e.g., Dinner at Italian Restaurant"
+              style={{ width: '100%' }}
             />
           </div>
-          <div className="form-group">
-            <label>Amount (¥)</label>
-            <input
-              type="number"
-              value={newSplit.amount}
-              onChange={(e) => setNewSplit({...newSplit, amount: e.target.value})}
-              placeholder="35.00"
-            />
-          </div>
-          <div className="form-group">
+          <div style={{ margin: '16px 0' }}>
             <label>
               <input
                 type="checkbox"
@@ -117,15 +143,21 @@ const Splits = () => {
               They owe you (uncheck if you owe them)
             </label>
           </div>
-          <div className="form-actions">
-            <button onClick={handleAddSplit} className="btn primary">Add Split</button>
+          <div className="row">
+            <button onClick={handleAddSplit} className="btn">Add Split</button>
             <button onClick={() => setShowAddForm(false)} className="btn secondary">Cancel</button>
           </div>
         </div>
       )}
 
-      <div className="splits-table">
-        <table>
+      <div className="panel">
+        <div className="page-header">
+          <div className="page-title">
+            <h3>All Splits</h3>
+            <p>View and manage your shared expenses</p>
+          </div>
+        </div>
+        <table className="table">
           <thead>
             <tr>
               <th>Person</th>
@@ -140,14 +172,14 @@ const Splits = () => {
               <tr key={split.id}>
                 <td>{split.person}</td>
                 <td>{split.note}</td>
-                <td>¥{(split.amount / 100).toFixed(2)}</td>
+                <td className="amount">â{(split.amount / 100).toFixed(2)}</td>
                 <td>
-                  <span className={`split-type ${split.isOwed ? 'owed' : 'you-owe'}`}>
+                  <span className={`badge ${split.isOwed ? 'paid' : 'overdue'}`}>
                     {split.isOwed ? 'Owed to You' : 'You Owe'}
                   </span>
                 </td>
                 <td>
-                  <span className="status-pending">Pending</span>
+                  <span className="badge upcoming">Pending</span>
                 </td>
               </tr>
             ))}
@@ -156,9 +188,11 @@ const Splits = () => {
       </div>
 
       {displaySplits.length === 0 && (
-        <div className="no-splits">
-          <h3>No splits yet</h3>
-          <p>Start tracking shared expenses with friends!</p>
+        <div className="panel">
+          <div style={{ textAlign: 'center', padding: '40px' }}>
+            <h3>No splits yet</h3>
+            <p>Start tracking shared expenses with friends!</p>
+          </div>
         </div>
       )}
     </div>

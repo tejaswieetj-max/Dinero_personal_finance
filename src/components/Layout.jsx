@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 
@@ -6,9 +6,18 @@ const Layout = ({ children }) => {
   const { user, totalBalance } = useApp();
   const navigate = useNavigate();
 
+  useEffect(() => {
+    // Apply dark theme by default
+    document.body.classList.add('dark');
+  }, []);
+
   const handleLogout = () => {
     localStorage.removeItem('dineroAppState');
     navigate('/login');
+  };
+
+  const toggleTheme = () => {
+    document.body.classList.toggle('dark');
   };
 
   return (
@@ -27,18 +36,16 @@ const Layout = ({ children }) => {
       </aside>
 
       {/* Main Content */}
-      <main>
+      <main className="content">
         {/* Header */}
-        <header className="header">
-          <div className="header-content">
-            <div className="user-info">
+        <header className="dashboard-header">
+          <div className="page-header">
+            <div className="page-title">
               <h1>Hi, {user?.name || 'User'}</h1>
-              <p className="balance-display">
-                Net Worth: <span className="balance-amount">¥{(totalBalance / 100).toFixed(2)}</span>
-              </p>
+              <p>Net Worth: <span className="amount positive">â{ (totalBalance / 100).toFixed(2) }</span></p>
             </div>
             <div className="header-actions">
-              <button className="theme-toggle">ð</button>
+              <button className="theme-toggle" onClick={toggleTheme}>ð</button>
             </div>
           </div>
         </header>

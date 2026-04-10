@@ -11,7 +11,7 @@ const MOCK_TRANSACTIONS = [
 ];
 
 const Dashboard = () => {
-  const { transactions, totalBalance } = useApp();
+  const { transactions, totalBalance, user } = useApp();
 
   // Display transactions (show mock entries if empty)
   const displayTransactions = transactions.length > 0 ? transactions : MOCK_TRANSACTIONS;
@@ -19,59 +19,82 @@ const Dashboard = () => {
   return (
     <div className="dashboard-content">
       {/* Net Worth Card */}
-      <div className="net-worth-card">
-        <h2>Net Worth</h2>
-        <div className="balance-display">
-          <span className="balance-amount">¥{(totalBalance / 100).toFixed(2)}</span>
+      <div className="virtual-card">
+        <div className="virtual-card-left">
+          <div className="virtual-card-label">Total Balance</div>
+          <div className="virtual-card-number">â{(totalBalance / 100).toFixed(2)}</div>
+          <div className="virtual-card-holder">
+            <strong>{user?.name || 'User'}</strong>
+            Primary Account
+          </div>
         </div>
-        <div className="balance-change">
-          <span className="change-positive">+12.5%</span> from last month
-        </div>
-      </div>
-
-      {/* Recent Transactions */}
-      <div className="transactions-section">
-        <h3>Recent Transactions</h3>
-        <div className="transactions-table">
-          <table>
-            <thead>
-              <tr>
-                <th>Date</th>
-                <th>Description</th>
-                <th>Category</th>
-                <th>Amount</th>
-              </tr>
-            </thead>
-            <tbody>
-              {displayTransactions.map((transaction) => (
-                <tr key={transaction.id}>
-                  <td>{transaction.date}</td>
-                  <td>{transaction.desc}</td>
-                  <td>{transaction.category}</td>
-                  <td className={transaction.type === 'credit' ? 'credit' : 'debit'}>
-                    {transaction.type === 'credit' ? '+' : '-'}¥{(transaction.amount / 100).toFixed(2)}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <div className="virtual-card-right">
+          <div className="virtual-card-tag">DINERO</div>
+          <div className="virtual-card-expiry">
+            VALID
+            <strong>THRU</strong>
+          </div>
         </div>
       </div>
 
       {/* Quick Stats */}
-      <div className="quick-stats">
-        <div className="stat-card">
-          <h4>Monthly Income</h4>
-          <p>¥15,000.00</p>
+      <div className="cards">
+        <div className="card">
+          <div className="card-icon">ð</div>
+          <h3>Monthly Income</h3>
+          <p className="amount positive">â15,000.00</p>
+          <div className="card-trend positive">
+            <span>+</span> 8.2% from last month
+          </div>
         </div>
-        <div className="stat-card">
-          <h4>Monthly Expenses</h4>
-          <p>¥8,500.00</p>
+        <div className="card">
+          <div className="card-icon">ð</div>
+          <h3>Monthly Expenses</h3>
+          <p className="amount negative">â8,500.00</p>
+          <div className="card-trend negative">
+            <span>+</span> 3.1% from last month
+          </div>
         </div>
-        <div className="stat-card">
-          <h4>Savings Rate</h4>
-          <p>43.3%</p>
+        <div className="card">
+          <div className="card-icon">ð</div>
+          <h3>Savings Rate</h3>
+          <p className="amount positive">43.3%</p>
+          <div className="card-trend positive">
+            <span>+</span> 2.4% from last month
+          </div>
         </div>
+      </div>
+
+      {/* Recent Transactions */}
+      <div className="panel">
+        <div className="page-header">
+          <div className="page-title">
+            <h2>Recent Transactions</h2>
+            <p>Your latest financial activity</p>
+          </div>
+        </div>
+        <table className="table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Description</th>
+              <th>Category</th>
+              <th>Amount</th>
+            </tr>
+          </thead>
+          <tbody>
+            {displayTransactions.slice(0, 5).map((transaction) => (
+              <tr key={transaction.id}>
+                <td>{transaction.date}</td>
+                <td>{transaction.desc}</td>
+                <td>{transaction.category}</td>
+                <td className={`amount ${transaction.type === 'credit' ? 'positive' : 'negative'}`}>
+                  {transaction.type === 'credit' ? '+' : '-'}â{(transaction.amount / 100).toFixed(2)}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     </div>
   );

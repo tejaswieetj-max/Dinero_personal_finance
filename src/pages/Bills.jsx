@@ -36,26 +36,36 @@ const Bills = () => {
 
   return (
     <div className="bills-content">
-      <div className="bills-header">
-        <h2>Bills</h2>
-        <div className="bills-summary">
-          <div className="summary-card">
-            <h4>Unpaid Bills</h4>
-            <span className="count">{unpaidBills.length}</span>
-          </div>
-          <div className="summary-card">
-            <h4>Paid Bills</h4>
-            <span className="count">{paidBills.length}</span>
-          </div>
-          <div className="summary-card">
-            <h4>Total Due</h4>
-            <span className="amount">¥{(totalDue / 100).toFixed(2)}</span>
-          </div>
+      <div className="page-header">
+        <div className="page-title">
+          <h2>Bills</h2>
+          <p>Manage and track your recurring payments</p>
         </div>
       </div>
 
-      <div className="bills-table">
-        <table>
+      <div className="row">
+        <div className="panel">
+          <h4>Unpaid Bills</h4>
+          <p className="amount negative">{unpaidBills.length}</p>
+        </div>
+        <div className="panel">
+          <h4>Paid Bills</h4>
+          <p className="amount positive">{paidBills.length}</p>
+        </div>
+        <div className="panel">
+          <h4>Total Due</h4>
+          <p className="amount negative">â{(totalDue / 100).toFixed(2)}</p>
+        </div>
+      </div>
+
+      <div className="panel">
+        <div className="page-header">
+          <div className="page-title">
+            <h3>All Bills</h3>
+            <p>View and manage your bill payments</p>
+          </div>
+        </div>
+        <table className="table">
           <thead>
             <tr>
               <th>Bill Name</th>
@@ -70,23 +80,23 @@ const Bills = () => {
               <tr key={bill.id}>
                 <td>{bill.name}</td>
                 <td>{bill.due}</td>
-                <td>¥{(bill.amount / 100).toFixed(2)}</td>
+                <td className="amount">â{(bill.amount / 100).toFixed(2)}</td>
                 <td>
-                  <span className={getStatusBadge(bill.status)}>
+                  <span className={`badge ${bill.status === 'paid' ? 'paid' : 'overdue'}`}>
                     {getStatusText(bill.status)}
                   </span>
                 </td>
                 <td>
                   {bill.status === 'unpaid' && (
                     <button 
-                      className="pay-btn"
+                      className="btn"
                       onClick={() => handlePayBill(bill.id)}
                     >
                       Pay Bill
                     </button>
                   )}
                   {bill.status === 'paid' && (
-                    <span className="paid-indicator">â Paid</span>
+                    <span className="badge paid">â Paid</span>
                   )}
                 </td>
               </tr>
@@ -96,9 +106,11 @@ const Bills = () => {
       </div>
 
       {unpaidBills.length === 0 && (
-        <div className="no-bills">
-          <h3>All bills paid! ð</h3>
-          <p>You're all caught up on your bills.</p>
+        <div className="panel">
+          <div style={{ textAlign: 'center', padding: '40px' }}>
+            <h3>All bills paid! ð</h3>
+            <p>You're all caught up on your bills.</p>
+          </div>
         </div>
       )}
     </div>
